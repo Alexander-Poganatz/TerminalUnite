@@ -108,6 +108,8 @@ namespace apoganatz
 			// Get mouse and keyboard input
 			::SetConsoleMode(consoleInputHandle, ENABLE_WINDOW_INPUT | ENABLE_EXTENDED_FLAGS | ENABLE_MOUSE_INPUT | ENABLE_PROCESSED_INPUT);
 
+			this->setCurserVisibility(false);
+
 			// Set the size of the input buffer to be big enough
 			inputBuffer.resize(128);
 		}
@@ -148,6 +150,13 @@ namespace apoganatz
 		{
 			::SetConsoleCursorPosition(consoleOutputHandle, COORD{ x, y });
 		};
+
+		virtual Coordinate getCursorPosition() 
+		{
+			CONSOLE_SCREEN_BUFFER_INFO info;
+			GetConsoleScreenBufferInfo(consoleOutputHandle, &info);
+			return Coordinate(info.dwCursorPosition.X, info.dwCursorPosition.Y);
+		}
 
 		virtual void setSize(short width, short height)
 		{

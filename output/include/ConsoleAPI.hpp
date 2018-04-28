@@ -146,6 +146,14 @@ namespace apoganatz
 			@param y [in] the y position to set
 		*/
 		virtual void setCursorPosition(short x, short y) = 0;
+
+		/**
+			@fn getCursorPosition
+			@brief gets the position of the cursor on the console
+			@return the x,y coordinate of the cursor
+		*/
+		virtual Coordinate getCursorPosition() = 0;
+
 		/**
 			@fn setSize
 			@brief Sets the size of the console screen and buffers
