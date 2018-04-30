@@ -138,7 +138,7 @@ namespace apoganatz
 			@brief sets the visiblity on the console to either visible or invisible
 			@param visibility [in] true is visible, false is to hide it
 		*/
-		virtual void setCurserVisibility(bool visiblity) = 0;
+		virtual void setCursorVisibility(bool visiblity) = 0;
 		/**
 			@fn setCursorPosition
 			@brief Sets the position of the cursor
