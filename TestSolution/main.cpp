@@ -3,6 +3,7 @@
 #include <iostream>
 #include <Panel.hpp>
 #include <thread>
+#include <list>
 namespace a = apoganatz;
 
 volatile bool cntrlHit = false;
@@ -11,6 +12,7 @@ void cntrlIsHit()
 	cntrlHit = true;
 }
 
+// Testing to see what happens when an instance is created before main() is even ran
 struct GlobalInstanceTester
 {
 	apoganatz::IConsoleAPI& ref;
@@ -19,12 +21,29 @@ struct GlobalInstanceTester
 
 GlobalInstanceTester instance;
 
+int printTestInputX = 15;
+std::list<std::wstring> list;
+void printTestInput(std::wstring const& s)
+{
+	list.push_back(s);
+	if (list.size() > 10)
+		list.pop_front();
+	auto iter = list.begin();
+	for (size_t y = 0; y < list.size(); ++y)
+	{
+		instance.ref.writeCharactors(apoganatz::CharInfo(L' ', apoganatz::colors::WHITE_BACKGROUND), 40, apoganatz::Coordinate(printTestInputX, y));
+		instance.ref.writeString(*iter, apoganatz::colors::WHITE_BACKGROUND, apoganatz::Coordinate(printTestInputX, y));
+		++iter;
+	}
+	
+}
+
 void testInput()
 {
 	std::vector<apoganatz::InputEvent> events(128);
 	size_t numOfEvents;
 	bool notQuiting = true;
-	std::cout << "Beginning input test, press Esc to exit." << std::endl;
+	printTestInput(L"Beginning input test, press Esc to exit.");
 	while (notQuiting)
 	{
 		numOfEvents = instance.ref.getInput(events);
@@ -35,148 +54,148 @@ void testInput()
 			switch (events[x].eventCode)
 			{
 			case a::EventCode::ESC:
-				std::cout << "ESC pressed" << std::endl;
+				printTestInput(L"ESC pressed");
 				notQuiting = false;
 				break;
 			case a::EventCode::F1:
-				std::cout << "F1 pressed" << std::endl;
+				printTestInput(L"F1 pressed");
 				break;
 			case a::EventCode::F2:
-				std::cout << "F2 pressed" << std::endl;
+				printTestInput(L"F2 pressed");
 				break;
 			case a::EventCode::F3:
-				std::cout << "F3 pressed" << std::endl;
+				printTestInput(L"F3 pressed");
 				break;
 			case a::EventCode::F4:
-				std::cout << "F4 pressed" << std::endl;
+				printTestInput(L"F4 pressed");
 				break;
 			case a::EventCode::F5:
-				std::cout << "F5 pressed" << std::endl;
+				printTestInput(L"F5 pressed");
 				break;
 			case a::EventCode::F6:
-				std::cout << "F6 pressed" << std::endl;
+				printTestInput(L"F6 pressed");
 				break;
 			case a::EventCode::F7:
-				std::cout << "F7 pressed" << std::endl;
+				printTestInput(L"F7 pressed");
 				break;
 			case a::EventCode::F8:
-				std::cout << "F8 pressed" << std::endl;
+				printTestInput(L"F8 pressed");
 				break;
 			case a::EventCode::F9:
-				std::cout << "F9 pressed" << std::endl;
+				printTestInput(L"F9 pressed");
 				break;
 			case a::EventCode::F10:
-				std::cout << "F10 pressed" << std::endl;
+				printTestInput(L"F10 pressed");
 				break;
 			case a::EventCode::F11:
-				std::cout << "F11 pressed" << std::endl;
+				printTestInput(L"F11 pressed");
 				break;
 			case a::EventCode::F12:
-				std::cout << "F12 pressed" << std::endl;
+				printTestInput(L"F12 pressed");
 				break;
 			case a::EventCode::ENTER:
-				std::cout << "ENTER pressed" << std::endl;
+				printTestInput(L"ENTER pressed");
 				break;
 			case a::EventCode::UP:
-				std::cout << "UP pressed" << std::endl;
+				printTestInput(L"UP pressed");
 				break;
 			case a::EventCode::DOWN:
-				std::cout << "DOWN pressed" << std::endl;
+				printTestInput(L"DOWN pressed");
 				break;
 			case a::EventCode::LEFT:
-				std::cout << "LEFT pressed" << std::endl;
+				printTestInput(L"LEFT pressed");
 				break;
 			case a::EventCode::RIGHT:
-				std::cout << "RIGHT pressed" << std::endl;
+				printTestInput(L"RIGHT pressed");
 				break;
 			case a::EventCode::BACKSPACE:
-				std::cout << "Backspace pressed" << std::endl;
+				printTestInput(L"Backspace pressed");
 				break;
 			case a::EventCode::DELETE:
-				std::cout << "DELETE pressed" << std::endl;
+				printTestInput(L"DELETE pressed");
 				break;
 			case a::EventCode::INSERT:
-				std::cout << "INSERT pressed" << std::endl;
+				printTestInput(L"INSERT pressed");
 				break;
 			case a::EventCode::PAGE_UP:
-				std::cout << "PAGE_UP pressed" << std::endl;
+				printTestInput(L"PAGE_UP pressed");
 				break;
 			case a::EventCode::PAGE_DOWN:
-				std::cout << "PAGE_DOWN pressed" << std::endl;
+				printTestInput(L"PAGE_DOWN pressed");
 				break;
 			case a::EventCode::HOME:
-				std::cout << "HOME pressed" << std::endl;
+				printTestInput(L"HOME pressed");
 				break;
 			case a::EventCode::NUM_0:
-				std::cout << "NUM_0 pressed" << std::endl;
+				printTestInput(L"NUM_0 pressed");
 				break;
 			case a::EventCode::NUM_1:
-				std::cout << "NUM_1 pressed" << std::endl;
+				printTestInput(L"NUM_1 pressed");
 				break;
 			case a::EventCode::NUM_2:
-				std::cout << "NUM_2 pressed" << std::endl;
+				printTestInput(L"NUM_2 pressed");
 				break;
 			case a::EventCode::NUM_3:
-				std::cout << "NUM_3 pressed" << std::endl;
+				printTestInput(L"NUM_3 pressed");
 				break;
 			case a::EventCode::NUM_4:
-				std::cout << "NUM_4 pressed" << std::endl;
+				printTestInput(L"NUM_4 pressed");
 				break;
 			case a::EventCode::NUM_5:
-				std::cout << "NUM_5 pressed" << std::endl;
+				printTestInput(L"NUM_5 pressed");
 				break;
 			case a::EventCode::NUM_6:
-				std::cout << "NUM_6 pressed" << std::endl;
+				printTestInput(L"NUM_6 pressed");
 				break;
 			case a::EventCode::NUM_7:
-				std::cout << "NUM_7 pressed" << std::endl;
+				printTestInput(L"NUM_7 pressed");
 				break;
 			case a::EventCode::NUM_8:
-				std::cout << "NUM_8 pressed" << std::endl;
+				printTestInput(L"NUM_8 pressed");
 				break;
 			case a::EventCode::NUM_9:
-				std::cout << "NUM_9 pressed" << std::endl;
+				printTestInput(L"NUM_9 pressed");
 				break;
 			case a::EventCode::END:
-				std::cout << "END pressed" << std::endl;
+				printTestInput(L"END pressed");
 				break;
 
 			case a::EventCode::ANY:
-				std::cout << "Any: " << events[x].ch << std::endl;
+				printTestInput(std::wstring(L"Any: ").append(std::to_wstring( events[x].ch)));
 				break;
 
 			case a::EventCode::MOUSE_LEFT_CLICK:
-				std::cout << "MOUSE_LEFT_CLICK: " << " X: " << events[x].x << " Y: " << events[x].y << std::endl;
+				printTestInput(L"MOUSE_LEFT_CLICK: X: " + std::to_wstring(events[x].x) + L" Y: " + std::to_wstring(events[x].y));
 				break;
 
 			case a::EventCode::MOUSE_LEFT_RELEASE:
-				std::cout << "MOUSE_LEFT_RELEASE: " << " X: " << events[x].x << " Y: " << events[x].y << std::endl;
+				printTestInput(L"MOUSE_LEFT_RELEASE: X: " + std::to_wstring(events[x].x) + L" Y: " + std::to_wstring(events[x].y));
 				break;
 
 			case a::EventCode::MOUSE_RIGHT_CLICK:
-				std::cout << "MOUSE_RIGHT_CLICK: " << " X: " << events[x].x << " Y: " << events[x].y << std::endl;
+				printTestInput(L"MOUSE_RIGHT_CLICK: X: " + std::to_wstring(events[x].x) + L" Y: " + std::to_wstring(events[x].y));
 				break;
 
 			case a::EventCode::MOUSE_RIGHT_RELEASE:
-				std::cout << "MOUSE_RIGHT_RELEASE: " << " X: " << events[x].x << " Y: " << events[x].y << std::endl;
+				printTestInput(L"MOUSE_RIGHT_RELEASE: X: " + std::to_wstring(events[x].x) + L" Y: " + std::to_wstring(events[x].y));
 				break;
 
 			case a::EventCode::MOUSE_SCROLLWHEEL_PRESS:
-				std::cout << "MOUSE_SCROLLWHEEL_PRESS: " << " X: " << events[x].x << " Y: " << events[x].y << std::endl;
+				printTestInput(L"MOUSE_SCROLLWHEEL_PRESS: X: " + std::to_wstring(events[x].x) + L" Y: " + std::to_wstring(events[x].y));
 				break;
 
 			case a::EventCode::MOUSE_SCROLLWHEEL_RELEASE:
-				std::cout << "MOUSE_SCROLLWHEEL_RELEASE: " << " X: " << events[x].x << " Y: " << events[x].y << std::endl;
+				printTestInput(L"MOUSE_SCROLLWHEEL_RELEASE: X: " + std::to_wstring(events[x].x) + L" Y: " + std::to_wstring(events[x].y));
 				break;
 
 			case a::EventCode::MOUSE_SCROLL_DOWN:
-				std::cout << "MOUSE_SCROLL_DOWN: " << " X: " << events[x].x << " Y: " << events[x].y << std::endl;
+				printTestInput(L"MOUSE_SCROLL_DOWN: X: " + std::to_wstring(events[x].x) + L" Y: " + std::to_wstring(events[x].y));
 				break;
 			case a::EventCode::MOUSE_SCROLL_UP:
-				std::cout << "MOUSE_SCROLL_UP: " << " X: " << events[x].x << " Y: " << events[x].y << std::endl;
+				printTestInput(L"MOUSE_SCROLL_UP: X: " + std::to_wstring(events[x].x) + L" Y: " + std::to_wstring(events[x].y));
 				break;
 			case a::EventCode::MOUSE_DOUBLE_CLICK:
-				std::cout << "MOUSE_DOUBLE_CLICK: " << " X: " << events[x].x << " Y: " << events[x].y << std::endl;
+				printTestInput(L"MOUSE_DOUBLE_CLICK: X: " + std::to_wstring(events[x].x) + L" Y: " + std::to_wstring(events[x].y));
 				break;
 			}
 		}
@@ -186,11 +205,7 @@ void testInput()
 
 int main()
 {
-	//for a breakpoint marker;
-	int x = 2 + 2;
-	x += 2;
-	
-	std::cout << "Before initialization of console implementation." << std::endl;
+
 	apoganatz::IConsoleAPI& console = apoganatz::getConsoleInstance();
 
 	testInput();
@@ -210,12 +225,6 @@ int main()
 
 
 	//Don't exit
-	std::vector<apoganatz::InputEvent> events;
-	events.resize(128);
-	while (events[0].eventCode != apoganatz::EventCode::ESC)
-	{
-		console.getInput(events);
-	}
 	console.setCTRLCHandler(cntrlIsHit);
 	console.writeString(L"Press CNTRL-C to exit", a::colors::BLUE_TEXT, a::Coordinate(0, 12));
 	while (cntrlHit == false);
