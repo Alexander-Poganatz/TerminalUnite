@@ -107,6 +107,7 @@ namespace apoganatz
 			colors::setAttrColor(ch.color);
 			for(int x = 0; x < num; ++x)
 				addch(ch.ch);
+			refresh();
 		}
 
 		void writeString(std::wstring const& str, int color, Coordinate pos)
@@ -115,6 +116,7 @@ namespace apoganatz
 			move(pos.y, pos.x);
 			colors::setAttrColor(color);
 			addstr(copy.c_str());
+			refresh();
 		}
 
 		void writeOutput(std::vector<CharInfo> const& buffer, Rectangle area)
@@ -129,6 +131,7 @@ namespace apoganatz
 					++index;
 				}
 			}
+			refresh();
 		}
 
 		size_t getInput(std::vector<InputEvent> & buffer)
