@@ -1,4 +1,4 @@
-
+﻿
 #include <ConsoleAPI.hpp>
 #include <iostream>
 #include <Panel.hpp>
@@ -205,7 +205,7 @@ int main()
 
 
 	std::vector<apoganatz::CharInfo> info;
-	info.resize(16, apoganatz::CharInfo(L'B', apoganatz::colors::GREEN_BACKGROUND));
+	info.resize(16, apoganatz::CharInfo(L'木', apoganatz::colors::GREEN_BACKGROUND));
 	console.writeOutput(info, apoganatz::Rectangle(10, 10, 4, 4));
 
 

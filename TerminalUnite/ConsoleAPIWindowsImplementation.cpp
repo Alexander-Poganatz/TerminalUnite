@@ -1,4 +1,4 @@
-#if defined(_WIN32)
+﻿#if defined(_WIN32)
 
 /**
 	@file ConsoleAPIWindowsImplementation
@@ -108,7 +108,7 @@ namespace apoganatz
 			// Get mouse and keyboard input
 			::SetConsoleMode(consoleInputHandle, ENABLE_WINDOW_INPUT | ENABLE_EXTENDED_FLAGS | ENABLE_MOUSE_INPUT | ENABLE_PROCESSED_INPUT);
 
-			this->setCurserVisibility(false);
+			this->setCursorVisibility(false);
 
 			// Set the size of the input buffer to be big enough
 			inputBuffer.resize(128);
@@ -138,7 +138,7 @@ namespace apoganatz
 			::SetConsoleMode(consoleInputHandle, ConsoleMode);
 		}
 
-		virtual void setCurserVisibility(bool isVisible)
+		virtual void setCursorVisibility(bool isVisible) override
 		{
 			CONSOLE_CURSOR_INFO info;
 			GetConsoleCursorInfo(consoleOutputHandle, &info);
@@ -146,19 +146,19 @@ namespace apoganatz
 			SetConsoleCursorInfo(consoleOutputHandle, &info);
 		};
 
-		virtual void setCursorPosition(short x, short y) 
+		virtual void setCursorPosition(short x, short y) override
 		{
 			::SetConsoleCursorPosition(consoleOutputHandle, COORD{ x, y });
 		};
 
-		virtual Coordinate getCursorPosition() 
+		virtual Coordinate getCursorPosition() override
 		{
 			CONSOLE_SCREEN_BUFFER_INFO info;
 			GetConsoleScreenBufferInfo(consoleOutputHandle, &info);
 			return Coordinate(info.dwCursorPosition.X, info.dwCursorPosition.Y);
 		}
 
-		virtual void setSize(short width, short height)
+		virtual void setSize(short width, short height) override
 		{
 			// make the window size as small as possible before changing the size of the buffer
 			SMALL_RECT rect{ 0 };
@@ -180,7 +180,7 @@ namespace apoganatz
 			SetConsoleWindowInfo(consoleOutputHandle, TRUE, &rect);
 		}
 
-		virtual void writeCharactors(CharInfo ch, int num, Coordinate pos) 
+		virtual void writeCharactors(CharInfo ch, int num, Coordinate pos) override
 		{
 			DWORD numPut = 0;
 
@@ -191,7 +191,7 @@ namespace apoganatz
 			FillConsoleOutputCharacterW(consoleOutputHandle, ch.ch, num, startPos, &numPut);
 		};
 
-		virtual void writeString(std::wstring const& str, int color, Coordinate pos) 
+		virtual void writeString(std::wstring const& str, int color, Coordinate pos) override
 		{
 			DWORD numPut = 0;
 			COORD startPos;
@@ -201,7 +201,7 @@ namespace apoganatz
 			WriteConsoleOutputCharacterW(consoleOutputHandle, str.c_str(), (DWORD)str.size(), startPos, &numPut);
 		};
 
-		virtual void writeOutput(std::vector<CharInfo> const& buffer, Rectangle area) 
+		virtual void writeOutput(std::vector<CharInfo> const& buffer, Rectangle area) override
 		{
 			if (buffer.size() > outputBuffer.size())
 				outputBuffer.resize(buffer.size());
@@ -228,7 +228,7 @@ namespace apoganatz
 			WriteConsoleOutputW(consoleOutputHandle, outputBuffer.data(), bufferSize, buffStartPos, &rect);
 		};
 
-		virtual size_t getInput(std::vector<InputEvent>& buffer)
+		virtual size_t getInput(std::vector<InputEvent>& buffer) override
 		{
 			DWORD numOfEvents = 0;
 			
