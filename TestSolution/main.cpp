@@ -31,8 +31,8 @@ void printTestInput(std::wstring const& s)
 	auto iter = list.begin();
 	for (size_t y = 0; y < list.size(); ++y)
 	{
-		instance.ref.writeCharactors(apoganatz::CharInfo(L' ', apoganatz::colors::WHITE_BACKGROUND), 40, apoganatz::Coordinate(printTestInputX, y));
-		instance.ref.writeString(*iter, apoganatz::colors::WHITE_BACKGROUND, apoganatz::Coordinate(printTestInputX, y));
+		instance.ref.writeCharactors(apoganatz::CharInfo(L' ', apoganatz::colors::WHITE_BACKGROUND), 40, apoganatz::Coordinate(printTestInputX, (short)y));
+		instance.ref.writeString(*iter, apoganatz::colors::WHITE_BACKGROUND, apoganatz::Coordinate(printTestInputX, (short)y));
 		++iter;
 	}
 	
@@ -223,7 +223,9 @@ int main()
 	info.resize(16, apoganatz::CharInfo(L'木', apoganatz::colors::GREEN_BACKGROUND));
 	console.writeOutput(info, apoganatz::Rectangle(10, 10, 4, 4));
 
-
+	// I expect giberish on 16 bit wchar_t compilers like windows. Also a compile warning.
+	info.assign(16, apoganatz::CharInfo(L'𐐷', apoganatz::colors::GREEN_BACKGROUND));
+	console.writeOutput(info, apoganatz::Rectangle(15, 15, 4, 4));
 	//Don't exit
 	console.setCTRLCHandler(cntrlIsHit);
 	console.writeString(L"Press CNTRL-C to exit", a::colors::BLUE_TEXT, a::Coordinate(0, 12));
