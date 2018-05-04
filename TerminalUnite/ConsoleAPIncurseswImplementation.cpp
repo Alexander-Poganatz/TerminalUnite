@@ -271,33 +271,41 @@ namespace apoganatz
 						// bstate holds lots of information.
 						if(event.bstate&BUTTON1_PRESSED)
 							buffer[0].eventCode = EventCode::MOUSE_LEFT_CLICK;
-						if(event.bstate&BUTTON1_RELEASED)
+						else if(event.bstate&BUTTON1_RELEASED)
 							buffer[0].eventCode = EventCode::MOUSE_LEFT_RELEASE;
-						if(event.bstate&BUTTON2_PRESSED)
+						else if(event.bstate&BUTTON2_PRESSED)
 							buffer[0].eventCode = EventCode::MOUSE_SCROLLWHEEL_PRESS;
-						if(event.bstate&BUTTON2_RELEASED)
+						else if(event.bstate&BUTTON2_RELEASED)
 							buffer[0].eventCode = EventCode::MOUSE_SCROLLWHEEL_RELEASE;
-						if(event.bstate&BUTTON3_PRESSED)
+						else if(event.bstate&BUTTON3_PRESSED)
 							buffer[0].eventCode = EventCode::MOUSE_RIGHT_CLICK;
-						if(event.bstate&BUTTON3_RELEASED)
+						else if(event.bstate&BUTTON3_RELEASED)
 							buffer[0].eventCode = EventCode::MOUSE_RIGHT_RELEASE;
-						if(event.bstate&BUTTON1_CLICKED)
+						else if(event.bstate&BUTTON1_CLICKED)
 						{
 							buffer[0].eventCode = EventCode::MOUSE_LEFT_CLICK;
 							buffer[1].eventCode = EventCode::MOUSE_LEFT_RELEASE;
 							numToReturn = 2;
 						}
-						if(event.bstate&BUTTON2_CLICKED)
+						else if(event.bstate&BUTTON2_CLICKED)
 						{
 							buffer[0].eventCode = EventCode::MOUSE_SCROLLWHEEL_PRESS;
 							buffer[1].eventCode = EventCode::MOUSE_SCROLLWHEEL_RELEASE;
 							numToReturn = 2;
 						}
-						if(event.bstate&BUTTON3_CLICKED)
+						else if(event.bstate&BUTTON3_CLICKED)
 						{
 							buffer[0].eventCode = EventCode::MOUSE_RIGHT_CLICK;
 							buffer[1].eventCode = EventCode::MOUSE_RIGHT_RELEASE;
 							numToReturn = 2;
+						}
+						else if(event.bstate&BUTTON1_DOUBLE_CLICKED)
+						{
+							buffer[0].eventCode = EventCode::MOUSE_DOUBLE_CLICK;
+						}
+						else
+						{
+							return 0;
 						}
 					}
 					else
