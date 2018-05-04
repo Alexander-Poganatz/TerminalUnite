@@ -11,7 +11,6 @@
 */
 
 // For linux wncurses compilation for wide char
-#define _XOPEN_SOURCE_EXTENDED
 
 #include <string>
 #include <vector>

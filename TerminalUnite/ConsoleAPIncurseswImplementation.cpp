@@ -1,9 +1,12 @@
 #include <ConsoleAPI.hpp>
-
+#ifndef _XOPEN_SOURCE_EXTENDED
+#define _XOPEN_SOURCE_EXTENDED
+#endif
 #include <ncursesw/ncurses.h>
 #include <locale>
 #include <memory>
 #include <signal.h>
+#include <bitset>
 namespace apoganatz
 {
 	namespace colors
@@ -55,7 +58,9 @@ namespace apoganatz
 	class NCursesWConsole : public IConsoleAPI
 	{
 		private:
-
+		const int CHAR_ARRAY_SIZE = 5;
+		char charArray[5];
+		std::bitset<sizeof(wchar_t)*8> bitField;
 		struct sigaction sa;
 		public:
 
@@ -70,12 +75,68 @@ namespace apoganatz
 			cbreak();
 			keypad(stdscr, TRUE);
 			mousemask(ALL_MOUSE_EVENTS, NULL);
-			timeout(10);			
+			timeout(10);
+			setCursorVisibility(false);			
 		}
 
 		~NCursesWConsole()
 		{
 			endwin();	
+		}
+
+		void printCharAsUTF8String(wchar_t ch)
+		{
+			size_t numOfBytesNeeded = 2;
+			// Values gotten from wikipedia
+			if(ch < 0x0080)
+			{
+				addch(ch);
+				return;
+			}
+			else if(ch >= 0x0800)
+				numOfBytesNeeded = 3;
+			else if(ch >= 0x1000)
+				numOfBytesNeeded = 4;
+			else if(ch > 0x10FFFF)
+			{
+				// An invalid unicode value, requires more than 21 bits
+				addch('?');
+				return;
+			}
+			for(int i = 0; i < CHAR_ARRAY_SIZE; ++i)
+				charArray[i] = 0;
+			bitField.reset();
+			std::bitset<sizeof(wchar_t)*8> charBitField(ch);
+			
+			size_t conversionOffset = 0;
+			for(size_t x = 0; x < numOfBytesNeeded*8; ++x)
+			{
+				for(int inner = 0; inner < 6; ++inner)
+				{
+					bitField[x] = charBitField[x-conversionOffset];
+					++x;
+				}
+				bitField[x] = 0;
+				++x;
+				bitField[x] = 1;
+				conversionOffset += 2;
+			}
+
+			int headerIndex = (numOfBytesNeeded*8)-numOfBytesNeeded;
+			--headerIndex;
+			
+			bitField[headerIndex] = 0;
+			for(int x = 1; x <= numOfBytesNeeded; ++x)
+			{
+				bitField.set(headerIndex+x);
+			}
+			unsigned long i = bitField.to_ulong();
+			for(int x = 0; x < numOfBytesNeeded; ++x)
+			{
+				charArray[numOfBytesNeeded-x-1] = i >> (8 * x);
+			}
+			printw(charArray);
+
 		}
 
 		void setCursorPosition(short x, short y) override
@@ -103,34 +164,42 @@ namespace apoganatz
 
 		void writeCharactors(CharInfo ch, int num, Coordinate pos)
 		{
+			auto cursPos = getCursorPosition();
 			move(pos.y, pos.x);
 			colors::setAttrColor(ch.color);
 			for(int x = 0; x < num; ++x)
-				addch(ch.ch);
+				printCharAsUTF8String(ch.ch);
+			setCursorPosition(cursPos.x, cursPos.y);
 			refresh();
 		}
 
 		void writeString(std::wstring const& str, int color, Coordinate pos)
-		{	
-			std::string copy(str.begin(), str.end());
+		{
+			auto cursPos = getCursorPosition();
+			
 			move(pos.y, pos.x);
 			colors::setAttrColor(color);
-			addstr(copy.c_str());
+			for(auto c : str)
+				printCharAsUTF8String(c);
+			setCursorPosition(cursPos.x, cursPos.y);
 			refresh();
 		}
 
 		void writeOutput(std::vector<CharInfo> const& buffer, Rectangle area)
 		{
+			auto cursPos = getCursorPosition();
 			int index = 0;
 			for(short y = area.y; y < (area.y + area.height); ++y)
 			{
+				move(y, area.x + area.width);
 				for(short x = area.x; x < (area.x + area.width); ++x)
 				{
 					colors::setAttrColor(buffer[index].color);
-					mvaddch(y, x, buffer[index].ch);
+					printCharAsUTF8String(buffer[index].ch);
 					++index;
 				}
 			}
+			setCursorPosition(cursPos.x, cursPos.y);
 			refresh();
 		}
 
