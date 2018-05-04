@@ -86,7 +86,7 @@ namespace apoganatz
 
 		void printCharAsUTF8String(wchar_t ch)
 		{
-			size_t numOfBytesNeeded = 2;
+			int numOfBytesNeeded = 2;
 			// Values gotten from wikipedia
 			if(ch < 0x0080)
 			{
@@ -109,7 +109,7 @@ namespace apoganatz
 			std::bitset<sizeof(wchar_t)*8> charBitField(ch);
 			
 			size_t conversionOffset = 0;
-			for(size_t x = 0; x < numOfBytesNeeded*8; ++x)
+			for(int x = 0; x < numOfBytesNeeded*8; ++x)
 			{
 				for(int inner = 0; inner < 6; ++inner)
 				{
