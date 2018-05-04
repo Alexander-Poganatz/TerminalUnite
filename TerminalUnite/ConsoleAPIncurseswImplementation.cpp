@@ -86,23 +86,26 @@ namespace apoganatz
 
 		void printCharAsUTF8String(wchar_t ch)
 		{
-			int numOfBytesNeeded = 2;
+			
 			// Values gotten from wikipedia
 			if(ch < 0x0080)
 			{
 				addch(ch);
 				return;
 			}
-			else if(ch >= 0x0800)
-				numOfBytesNeeded = 3;
-			else if(ch >= 0x1000)
-				numOfBytesNeeded = 4;
-			else if(ch > 0x10FFFF)
+			
+			int numOfBytesNeeded = 2;
+			// An invalid unicode value, requires more than 21 bits
+			if(ch > 0x10FFFF)
 			{
-				// An invalid unicode value, requires more than 21 bits
 				addch('?');
 				return;
 			}
+			else if(ch >= 0x10000)
+				numOfBytesNeeded = 4;
+			else if(ch >= 0x0800)
+				numOfBytesNeeded = 3;
+
 			for(int i = 0; i < CHAR_ARRAY_SIZE; ++i)
 				charArray[i] = 0;
 			bitField.reset();
@@ -116,24 +119,24 @@ namespace apoganatz
 					bitField[x] = charBitField[x-conversionOffset];
 					++x;
 				}
-				bitField[x] = 0;
+				bitField.reset(x);
 				++x;
-				bitField[x] = 1;
+				bitField.set(x);
 				conversionOffset += 2;
 			}
 
 			int headerIndex = (numOfBytesNeeded*8)-numOfBytesNeeded;
 			--headerIndex;
 			
-			bitField[headerIndex] = 0;
+			bitField.reset(headerIndex);
 			for(int x = 1; x <= numOfBytesNeeded; ++x)
 			{
 				bitField.set(headerIndex+x);
 			}
 			unsigned long i = bitField.to_ulong();
-			for(int x = 0; x < numOfBytesNeeded; ++x)
+			for(int x = numOfBytesNeeded-1; x >= 0; --x)
 			{
-				charArray[numOfBytesNeeded-x-1] = i >> (8 * x);
+				charArray[x] = i >> (8 * (numOfBytesNeeded-1-x));
 			}
 			printw(charArray);
 
