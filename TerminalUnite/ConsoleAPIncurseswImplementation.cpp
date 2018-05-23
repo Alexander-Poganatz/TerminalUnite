@@ -214,7 +214,58 @@ namespace apoganatz
 			if(buffer.size() < 2)
 				buffer.resize(2);
 
-			// todo check for utf-8 input
+			// Check if UTF-8 header.
+			if(ch > 192 && ch < 248)
+			{
+				char inputData[CHAR_ARRAY_SIZE] = {0};
+				int numRemaining = 1;
+				int index = 0;
+				inputData[index] = ch;
+				// Get number of bytes and chop off header.
+				if(ch >= 0xF0)
+				{
+					numRemaining = 3;
+					inputData[index] &= 0x7;
+				}
+				else if (ch >= 0xE0)
+				{
+					numRemaining = 2;
+					inputData[index] &= 0xF;
+				}
+				else
+				{
+					inputData[index] &= 0x1F;
+				}
+				int numOfBytes = numRemaining + 1;
+				
+				++index;
+				for(; numRemaining > 0; --numRemaining)
+				{
+					do
+					{
+						ch = getch();
+					}while(ch == ERR);
+					//if(ch == ERR)
+					{
+						// put error handling here.
+					}
+							//chop off header bits
+					inputData[index] = ch;
+					inputData[index] &= 0x3F;
+					++index;
+				}
+				//Now to put UTF-8 to UTF-32
+				long long utf32Var = 0;
+				for(int x = 0; x < numOfBytes; ++x)
+				{
+					
+					utf32Var |= inputData[x];
+					utf32Var = utf32Var << 6;
+				}
+				utf32Var = utf32Var >> 6;
+				ch = utf32Var;
+				
+			}
 
 			int numToReturn = 1;
 			buffer[0].ch = ch;
