@@ -1,9 +1,12 @@
 #include <ConsoleAPI.hpp>
-
+#ifndef _XOPEN_SOURCE_EXTENDED
+#define _XOPEN_SOURCE_EXTENDED
+#endif
 #include <ncursesw/ncurses.h>
 #include <locale>
 #include <memory>
 #include <signal.h>
+#include <bitset>
 namespace apoganatz
 {
 	namespace colors
@@ -55,7 +58,9 @@ namespace apoganatz
 	class NCursesWConsole : public IConsoleAPI
 	{
 		private:
-
+		const int CHAR_ARRAY_SIZE = 5;
+		char charArray[5];
+		std::bitset<sizeof(wchar_t)*8> bitField;
 		struct sigaction sa;
 		public:
 
@@ -70,12 +75,71 @@ namespace apoganatz
 			cbreak();
 			keypad(stdscr, TRUE);
 			mousemask(ALL_MOUSE_EVENTS, NULL);
-			timeout(10);			
+			timeout(10);
+			setCursorVisibility(false);			
 		}
 
 		~NCursesWConsole()
 		{
 			endwin();	
+		}
+
+		void printCharAsUTF8String(wchar_t ch)
+		{
+			
+			// Values gotten from wikipedia
+			if(ch < 0x0080)
+			{
+				addch(ch);
+				return;
+			}
+			
+			int numOfBytesNeeded = 2;
+			// An invalid unicode value, requires more than 21 bits
+			if(ch > 0x10FFFF)
+			{
+				addch('?');
+				return;
+			}
+			else if(ch >= 0x10000)
+				numOfBytesNeeded = 4;
+			else if(ch >= 0x0800)
+				numOfBytesNeeded = 3;
+
+			for(int i = 0; i < CHAR_ARRAY_SIZE; ++i)
+				charArray[i] = 0;
+			bitField.reset();
+			std::bitset<sizeof(wchar_t)*8> charBitField(ch);
+			
+			size_t conversionOffset = 0;
+			for(int x = 0; x < numOfBytesNeeded*8; ++x)
+			{
+				for(int inner = 0; inner < 6; ++inner)
+				{
+					bitField[x] = charBitField[x-conversionOffset];
+					++x;
+				}
+				bitField.reset(x);
+				++x;
+				bitField.set(x);
+				conversionOffset += 2;
+			}
+
+			int headerIndex = (numOfBytesNeeded*8)-numOfBytesNeeded;
+			--headerIndex;
+			
+			bitField.reset(headerIndex);
+			for(int x = 1; x <= numOfBytesNeeded; ++x)
+			{
+				bitField.set(headerIndex+x);
+			}
+			unsigned long i = bitField.to_ulong();
+			for(int x = numOfBytesNeeded-1; x >= 0; --x)
+			{
+				charArray[x] = i >> (8 * (numOfBytesNeeded-1-x));
+			}
+			printw(charArray);
+
 		}
 
 		void setCursorPosition(short x, short y) override
@@ -103,34 +167,42 @@ namespace apoganatz
 
 		void writeCharactors(CharInfo ch, int num, Coordinate pos)
 		{
+			auto cursPos = getCursorPosition();
 			move(pos.y, pos.x);
 			colors::setAttrColor(ch.color);
 			for(int x = 0; x < num; ++x)
-				addch(ch.ch);
+				printCharAsUTF8String(ch.ch);
+			setCursorPosition(cursPos.x, cursPos.y);
 			refresh();
 		}
 
 		void writeString(std::wstring const& str, int color, Coordinate pos)
-		{	
-			std::string copy(str.begin(), str.end());
+		{
+			auto cursPos = getCursorPosition();
+			
 			move(pos.y, pos.x);
 			colors::setAttrColor(color);
-			addstr(copy.c_str());
+			for(auto c : str)
+				printCharAsUTF8String(c);
+			setCursorPosition(cursPos.x, cursPos.y);
 			refresh();
 		}
 
 		void writeOutput(std::vector<CharInfo> const& buffer, Rectangle area)
 		{
+			auto cursPos = getCursorPosition();
 			int index = 0;
 			for(short y = area.y; y < (area.y + area.height); ++y)
 			{
+				move(y, area.x + area.width);
 				for(short x = area.x; x < (area.x + area.width); ++x)
 				{
 					colors::setAttrColor(buffer[index].color);
-					mvaddch(y, x, buffer[index].ch);
+					printCharAsUTF8String(buffer[index].ch);
 					++index;
 				}
 			}
+			setCursorPosition(cursPos.x, cursPos.y);
 			refresh();
 		}
 
@@ -142,7 +214,58 @@ namespace apoganatz
 			if(buffer.size() < 2)
 				buffer.resize(2);
 
-			// todo check for utf-8 input
+			// Check if UTF-8 header.
+			if(ch > 192 && ch < 248)
+			{
+				char inputData[CHAR_ARRAY_SIZE] = {0};
+				int numRemaining = 1;
+				int index = 0;
+				inputData[index] = ch;
+				// Get number of bytes and chop off header.
+				if(ch >= 0xF0)
+				{
+					numRemaining = 3;
+					inputData[index] &= 0x7;
+				}
+				else if (ch >= 0xE0)
+				{
+					numRemaining = 2;
+					inputData[index] &= 0xF;
+				}
+				else
+				{
+					inputData[index] &= 0x1F;
+				}
+				int numOfBytes = numRemaining + 1;
+				
+				++index;
+				for(; numRemaining > 0; --numRemaining)
+				{
+					do
+					{
+						ch = getch();
+					}while(ch == ERR);
+					//if(ch == ERR)
+					{
+						// put error handling here.
+					}
+							//chop off header bits
+					inputData[index] = ch;
+					inputData[index] &= 0x3F;
+					++index;
+				}
+				//Now to put UTF-8 to UTF-32
+				long long utf32Var = 0;
+				for(int x = 0; x < numOfBytes; ++x)
+				{
+					
+					utf32Var |= inputData[x];
+					utf32Var = utf32Var << 6;
+				}
+				utf32Var = utf32Var >> 6;
+				ch = utf32Var;
+				
+			}
 
 			int numToReturn = 1;
 			buffer[0].ch = ch;
@@ -199,33 +322,41 @@ namespace apoganatz
 						// bstate holds lots of information.
 						if(event.bstate&BUTTON1_PRESSED)
 							buffer[0].eventCode = EventCode::MOUSE_LEFT_CLICK;
-						if(event.bstate&BUTTON1_RELEASED)
+						else if(event.bstate&BUTTON1_RELEASED)
 							buffer[0].eventCode = EventCode::MOUSE_LEFT_RELEASE;
-						if(event.bstate&BUTTON2_PRESSED)
+						else if(event.bstate&BUTTON2_PRESSED)
 							buffer[0].eventCode = EventCode::MOUSE_SCROLLWHEEL_PRESS;
-						if(event.bstate&BUTTON2_RELEASED)
+						else if(event.bstate&BUTTON2_RELEASED)
 							buffer[0].eventCode = EventCode::MOUSE_SCROLLWHEEL_RELEASE;
-						if(event.bstate&BUTTON3_PRESSED)
+						else if(event.bstate&BUTTON3_PRESSED)
 							buffer[0].eventCode = EventCode::MOUSE_RIGHT_CLICK;
-						if(event.bstate&BUTTON3_RELEASED)
+						else if(event.bstate&BUTTON3_RELEASED)
 							buffer[0].eventCode = EventCode::MOUSE_RIGHT_RELEASE;
-						if(event.bstate&BUTTON1_CLICKED)
+						else if(event.bstate&BUTTON1_CLICKED)
 						{
 							buffer[0].eventCode = EventCode::MOUSE_LEFT_CLICK;
 							buffer[1].eventCode = EventCode::MOUSE_LEFT_RELEASE;
 							numToReturn = 2;
 						}
-						if(event.bstate&BUTTON2_CLICKED)
+						else if(event.bstate&BUTTON2_CLICKED)
 						{
 							buffer[0].eventCode = EventCode::MOUSE_SCROLLWHEEL_PRESS;
 							buffer[1].eventCode = EventCode::MOUSE_SCROLLWHEEL_RELEASE;
 							numToReturn = 2;
 						}
-						if(event.bstate&BUTTON3_CLICKED)
+						else if(event.bstate&BUTTON3_CLICKED)
 						{
 							buffer[0].eventCode = EventCode::MOUSE_RIGHT_CLICK;
 							buffer[1].eventCode = EventCode::MOUSE_RIGHT_RELEASE;
 							numToReturn = 2;
+						}
+						else if(event.bstate&BUTTON1_DOUBLE_CLICKED)
+						{
+							buffer[0].eventCode = EventCode::MOUSE_DOUBLE_CLICK;
+						}
+						else
+						{
+							return 0;
 						}
 					}
 					else
