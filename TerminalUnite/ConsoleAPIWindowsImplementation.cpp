@@ -65,6 +65,10 @@ namespace apoganatz
 
 		// Creating a buffer so memory doesn't have to be allocated for each call to writeOutput
 		std::vector<CHAR_INFO> outputBuffer;
+		std::vector<CharInfo> doubleBuffer;
+
+		short consoleWidth;
+		short consoleHeight;
 
 		std::vector<INPUT_RECORD> inputBuffer;
 		bool leftMousePressed = false;
@@ -97,13 +101,13 @@ namespace apoganatz
 			codePage = GetConsoleOutputCP();
 			::GetConsoleMode(consoleInputHandle, &ConsoleMode);
 
-			// Clear the Screen
-			this->writeCharactors(CharInfo(' ', FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY),
-				ConsoleScreenBufferInfo.dwSize.X * ConsoleScreenBufferInfo.dwSize.Y, Coordinate(0, 0));
-
 			// Change buffer size
 			this->setSize(ConsoleScreenBufferInfo.srWindow.Right - ConsoleScreenBufferInfo.srWindow.Left, ConsoleScreenBufferInfo.srWindow.Bottom
 				- ConsoleScreenBufferInfo.srWindow.Top);
+
+			// Clear the Screen
+			this->writeCharactors(CharInfo(' ', FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY),
+				consoleWidth * consoleHeight, Coordinate(0, 0));
 
 			// Get mouse and keyboard input
 			::SetConsoleMode(consoleInputHandle, ENABLE_WINDOW_INPUT | ENABLE_EXTENDED_FLAGS | ENABLE_MOUSE_INPUT | ENABLE_PROCESSED_INPUT);
@@ -171,61 +175,48 @@ namespace apoganatz
 
 			CONSOLE_SCREEN_BUFFER_INFO bufferInfo;
 			GetConsoleScreenBufferInfo(consoleOutputHandle, &bufferInfo);
-			width = (std::min)(width, bufferInfo.dwMaximumWindowSize.X);
-			height = (std::min)(height, bufferInfo.dwMaximumWindowSize.Y);
+			consoleWidth = (std::min)(width, bufferInfo.dwMaximumWindowSize.X);
+			consoleHeight = (std::min)(height, bufferInfo.dwMaximumWindowSize.Y);
 
 			rect.Top = rect.Left = 0;
-			rect.Right = width - 1;
-			rect.Bottom = height - 1;
+			rect.Right = consoleWidth - 1;
+			rect.Bottom = consoleHeight - 1;
 			SetConsoleWindowInfo(consoleOutputHandle, TRUE, &rect);
+
+			doubleBuffer.resize(consoleWidth * consoleHeight);
+			outputBuffer.resize(doubleBuffer.size());
 		}
 
 		virtual void writeCharactors(CharInfo ch, int num, Coordinate pos) override
 		{
-			DWORD numPut = 0;
-
-			COORD startPos;
-			startPos.X = pos.x;
-			startPos.Y = pos.y;
-			FillConsoleOutputAttribute(consoleOutputHandle, ch.color, num, startPos, &numPut);
-			FillConsoleOutputCharacterW(consoleOutputHandle, ch.ch, num, startPos, &numPut);
+			short writePosition = (pos.y * consoleWidth) + pos.x;
+			for (int x = 0; x < num; ++x) 
+			{
+				doubleBuffer[x + writePosition] = ch;
+			}
 		};
 
 		virtual void writeString(std::wstring const& str, int color, Coordinate pos) override
 		{
-			DWORD numPut = 0;
-			COORD startPos;
-			startPos.X = pos.x;
-			startPos.Y = pos.y;
-			FillConsoleOutputAttribute(consoleOutputHandle, color, (int)str.size(), startPos, &numPut);
-			WriteConsoleOutputCharacterW(consoleOutputHandle, str.c_str(), (DWORD)str.size(), startPos, &numPut);
+
+			short writePosition = (pos.y * consoleWidth) + pos.x;
+			for (size_t x = 0; x < str.size(); ++x)
+			{
+				doubleBuffer[x + writePosition].ch = str[x];
+			}
 		};
 
 		virtual void writeOutput(std::vector<CharInfo> const& buffer, Rectangle area) override
 		{
-			if (buffer.size() > outputBuffer.size())
-				outputBuffer.resize(buffer.size());
-
-			for (size_t x = 0; x < buffer.size(); ++x)
+			size_t bufferIndex = 0;
+			for (short y = 0; y < area.height; ++y) 
 			{
-				outputBuffer[x].Attributes = buffer[x].color;
-				outputBuffer[x].Char.UnicodeChar = buffer[x].ch;
+				for (short x = 0; x < area.width; ++x)
+				{
+					doubleBuffer[((area.y + y) * consoleWidth) + x + area.x] = buffer[bufferIndex];
+					++bufferIndex;
+				}
 			}
-
-			COORD bufferSize;
-			bufferSize.X = area.width;
-			bufferSize.Y = area.height;
-
-			COORD buffStartPos;
-			buffStartPos.X = 0;
-			buffStartPos.Y = 0;
-
-			SMALL_RECT rect;
-			rect.Left = area.x;
-			rect.Right = area.x + area.width;
-			rect.Top = area.y;
-			rect.Bottom = area.y + area.height;
-			WriteConsoleOutputW(consoleOutputHandle, outputBuffer.data(), bufferSize, buffStartPos, &rect);
 		};
 
 		virtual size_t getInput(std::vector<InputEvent>& buffer) override
@@ -443,6 +434,31 @@ namespace apoganatz
 			if (ctrlFuncToExecute == nullptr)
 				::SetConsoleCtrlHandler((PHANDLER_ROUTINE)SimpleCntlHandler, TRUE);
 			ctrlFuncToExecute = fn;
+		}
+
+		virtual void refresh() 
+		{
+
+			for (size_t x = 0; x < doubleBuffer.size(); ++x)
+			{
+				outputBuffer[x].Attributes = doubleBuffer[x].color;
+				outputBuffer[x].Char.UnicodeChar = doubleBuffer[x].ch;
+			}
+
+			COORD bufferSize;
+			bufferSize.X = consoleWidth;
+			bufferSize.Y = consoleHeight;
+
+			COORD buffStartPos;
+			buffStartPos.X = 0;
+			buffStartPos.Y = 0;
+
+			SMALL_RECT rect;
+			rect.Left = 0;
+			rect.Right = consoleWidth;
+			rect.Top = 0;
+			rect.Bottom = consoleHeight;
+			WriteConsoleOutputW(consoleOutputHandle, outputBuffer.data(), bufferSize, buffStartPos, &rect);
 		}
 	};
 

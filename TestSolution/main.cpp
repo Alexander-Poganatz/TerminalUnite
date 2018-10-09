@@ -35,7 +35,7 @@ void printTestInput(std::wstring const& s)
 		instance.ref.writeString(*iter, apoganatz::colors::WHITE_BACKGROUND, apoganatz::Coordinate(printTestInputX, (short)y));
 		++iter;
 	}
-	
+	instance.ref.refresh();
 }
 
 void testInput()
@@ -226,6 +226,7 @@ int main()
 	// I expect giberish on 16 bit wchar_t compilers like windows. Also a compile warning.
 	info.assign(16, apoganatz::CharInfo(L'𐐷', apoganatz::colors::GREEN_BACKGROUND));
 	console.writeOutput(info, apoganatz::Rectangle(15, 15, 4, 4));
+	console.refresh();
 	//Don't exit
 	console.setCTRLCHandler(cntrlIsHit);
 	console.writeString(L"Press CNTRL-C to exit", a::colors::BLUE_TEXT, a::Coordinate(0, 12));
