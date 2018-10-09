@@ -65,7 +65,6 @@ namespace apoganatz
 
 		// Creating a buffer so memory doesn't have to be allocated for each call to writeOutput
 		std::vector<CHAR_INFO> outputBuffer;
-		std::vector<CharInfo> doubleBuffer;
 
 		short consoleWidth;
 		short consoleHeight;
@@ -106,7 +105,7 @@ namespace apoganatz
 				- ConsoleScreenBufferInfo.srWindow.Top);
 
 			// Clear the Screen
-			this->writeCharactors(CharInfo(' ', FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY),
+			this->writeCharactors(CharInfo(' ', colors::WHITE_TEXT),
 				consoleWidth * consoleHeight, Coordinate(0, 0));
 
 			// Get mouse and keyboard input
@@ -183,8 +182,7 @@ namespace apoganatz
 			rect.Bottom = consoleHeight - 1;
 			SetConsoleWindowInfo(consoleOutputHandle, TRUE, &rect);
 
-			doubleBuffer.resize(consoleWidth * consoleHeight);
-			outputBuffer.resize(doubleBuffer.size());
+			outputBuffer.resize(consoleWidth * consoleHeight);
 		}
 
 		virtual void writeCharactors(CharInfo ch, int num, Coordinate pos) override
@@ -192,7 +190,8 @@ namespace apoganatz
 			short writePosition = (pos.y * consoleWidth) + pos.x;
 			for (int x = 0; x < num; ++x) 
 			{
-				doubleBuffer[x + writePosition] = ch;
+				outputBuffer[x + writePosition].Char.UnicodeChar = ch.ch;
+				outputBuffer[x + writePosition].Attributes = ch.color;
 			}
 		};
 
@@ -202,7 +201,7 @@ namespace apoganatz
 			short writePosition = (pos.y * consoleWidth) + pos.x;
 			for (size_t x = 0; x < str.size(); ++x)
 			{
-				doubleBuffer[x + writePosition].ch = str[x];
+				outputBuffer[x + writePosition].Char.UnicodeChar = str[x];
 			}
 		};
 
@@ -213,7 +212,8 @@ namespace apoganatz
 			{
 				for (short x = 0; x < area.width; ++x)
 				{
-					doubleBuffer[((area.y + y) * consoleWidth) + x + area.x] = buffer[bufferIndex];
+					outputBuffer[((area.y + y) * consoleWidth) + x + area.x].Char.UnicodeChar = buffer[bufferIndex].ch;
+					outputBuffer[((area.y + y) * consoleWidth) + x + area.x].Attributes = buffer[bufferIndex].color;
 					++bufferIndex;
 				}
 			}
@@ -438,12 +438,6 @@ namespace apoganatz
 
 		virtual void refresh() 
 		{
-
-			for (size_t x = 0; x < doubleBuffer.size(); ++x)
-			{
-				outputBuffer[x].Attributes = doubleBuffer[x].color;
-				outputBuffer[x].Char.UnicodeChar = doubleBuffer[x].ch;
-			}
 
 			COORD bufferSize;
 			bufferSize.X = consoleWidth;
