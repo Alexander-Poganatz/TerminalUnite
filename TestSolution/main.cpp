@@ -31,7 +31,7 @@ void printTestInput(std::wstring const& s)
 	auto iter = list.begin();
 	for (size_t y = 0; y < list.size(); ++y)
 	{
-		instance.ref.writeCharactors(apoganatz::CharInfo(L' ', apoganatz::colors::WHITE_BACKGROUND), 40, apoganatz::Coordinate(printTestInputX, (short)y));
+		instance.ref.writeCharInfo(apoganatz::CharInfo(L' ', apoganatz::colors::WHITE_BACKGROUND), 40, apoganatz::Coordinate(printTestInputX, (short)y));
 		instance.ref.writeString(*iter, apoganatz::colors::WHITE_BACKGROUND, apoganatz::Coordinate(printTestInputX, (short)y));
 		++iter;
 	}
@@ -212,7 +212,7 @@ int main()
 
 	console.writeString(L"Hello World!", apoganatz::colors::BLUE_BACKGROUND, apoganatz::Coordinate(0,0));
 
-	console.writeCharactors(apoganatz::CharInfo(L'A', apoganatz::colors::WHITE_BACKGROUND), 5, apoganatz::Coordinate(1, 1));
+	console.writeCharInfo(apoganatz::CharInfo(L'A', apoganatz::colors::WHITE_BACKGROUND), 5, apoganatz::Coordinate(1, 1));
 
 	apoganatz::Panel p;
 	p.x = 2; p.y = 5; p.height = 3; p.width = 5; p.color = apoganatz::colors::RED_BACKGROUND;

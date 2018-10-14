@@ -105,7 +105,7 @@ namespace apoganatz
 				- ConsoleScreenBufferInfo.srWindow.Top);
 
 			// Clear the Screen
-			this->writeCharactors(CharInfo(' ', colors::WHITE_TEXT),
+			this->writeCharInfo(CharInfo(' ', colors::WHITE_TEXT),
 				consoleWidth * consoleHeight, Coordinate(0, 0));
 
 			// Get mouse and keyboard input
@@ -185,7 +185,7 @@ namespace apoganatz
 			outputBuffer.resize(consoleWidth * consoleHeight);
 		}
 
-		virtual void writeCharactors(CharInfo ch, int num, Coordinate pos) override
+		virtual void writeCharInfo(CharInfo ch, int num, Coordinate pos) override
 		{
 			short writePosition = (pos.y * consoleWidth) + pos.x;
 			for (int x = 0; x < num; ++x) 
@@ -202,10 +202,11 @@ namespace apoganatz
 			for (size_t x = 0; x < str.size(); ++x)
 			{
 				outputBuffer[x + writePosition].Char.UnicodeChar = str[x];
+				outputBuffer[x + writePosition].Attributes = color;
 			}
 		};
 
-		virtual void writeOutput(std::vector<CharInfo> const& buffer, Rectangle area) override
+		virtual void writeCharInfo(std::vector<CharInfo> const& buffer, Rectangle area) override
 		{
 			size_t bufferIndex = 0;
 			for (short y = 0; y < area.height; ++y) 

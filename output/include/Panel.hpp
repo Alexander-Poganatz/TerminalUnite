@@ -53,7 +53,7 @@ namespace apoganatz
 		{
 			for (short h = 0; h < height; ++h)
 			{
-				consoleRef.writeCharactors(CharInfo(L' ', color), width, Coordinate(x, y + h));
+				consoleRef.writeCharInfo(CharInfo(L' ', color), width, Coordinate(x, y + h));
 			}
 		}
 	};

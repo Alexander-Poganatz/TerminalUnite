@@ -168,7 +168,7 @@ namespace apoganatz
 			@param num [in] the numer of ch to write
 			@param pos [in] the position to start writing
 		*/
-		virtual void writeCharactors(CharInfo ch, int num, Coordinate pos) = 0;
+		virtual void writeCharInfo(CharInfo ch, int num, Coordinate pos) = 0;
 		/**
 			@fn writeString
 			@brief writes a string to the buffer
