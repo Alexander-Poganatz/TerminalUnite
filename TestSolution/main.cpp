@@ -221,15 +221,15 @@ int main()
 
 	std::vector<apoganatz::CharInfo> info;
 	info.resize(16, apoganatz::CharInfo(L'木', apoganatz::colors::GREEN_BACKGROUND));
-	console.writeOutput(info, apoganatz::Rectangle(10, 10, 4, 4));
+	console.writeCharInfo(info, apoganatz::Rectangle(10, 10, 4, 4));
 
 	// I expect giberish on 16 bit wchar_t compilers like windows. Also a compile warning.
 	info.assign(16, apoganatz::CharInfo(L'𐐷', apoganatz::colors::GREEN_BACKGROUND));
-	console.writeOutput(info, apoganatz::Rectangle(15, 15, 4, 4));
-	console.refresh();
+	console.writeCharInfo(info, apoganatz::Rectangle(15, 15, 4, 4));
 	//Don't exit
 	console.setCTRLCHandler(cntrlIsHit);
 	console.writeString(L"Press CNTRL-C to exit", a::colors::BLUE_TEXT, a::Coordinate(0, 12));
+	console.refresh();
 	while (cntrlHit == false);
 	
 	

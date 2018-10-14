@@ -183,7 +183,7 @@ namespace apoganatz
 			@param buffer [in] the values to write
 			@param pos [in] the area to write to in the console. The width * height of the area should equal the buffer size.
 		*/
-		virtual void writeOutput(std::vector<CharInfo> const& buffer, Rectangle area) = 0;
+		virtual void writeCharInfo(std::vector<CharInfo> const& buffer, Rectangle area) = 0;
 
 		/**
 			@fn getInput
