@@ -31,11 +31,11 @@ void printTestInput(std::wstring const& s)
 	auto iter = list.begin();
 	for (size_t y = 0; y < list.size(); ++y)
 	{
-		instance.ref.writeCharactors(apoganatz::CharInfo(L' ', apoganatz::colors::WHITE_BACKGROUND), 40, apoganatz::Coordinate(printTestInputX, (short)y));
+		instance.ref.writeCharInfo(apoganatz::CharInfo(L' ', apoganatz::colors::WHITE_BACKGROUND), 40, apoganatz::Coordinate(printTestInputX, (short)y));
 		instance.ref.writeString(*iter, apoganatz::colors::WHITE_BACKGROUND, apoganatz::Coordinate(printTestInputX, (short)y));
 		++iter;
 	}
-	
+	instance.ref.refresh();
 }
 
 void testInput()
@@ -212,7 +212,7 @@ int main()
 
 	console.writeString(L"Hello World!", apoganatz::colors::BLUE_BACKGROUND, apoganatz::Coordinate(0,0));
 
-	console.writeCharactors(apoganatz::CharInfo(L'A', apoganatz::colors::WHITE_BACKGROUND), 5, apoganatz::Coordinate(1, 1));
+	console.writeCharInfo(apoganatz::CharInfo(L'A', apoganatz::colors::WHITE_BACKGROUND), 5, apoganatz::Coordinate(1, 1));
 
 	apoganatz::Panel p;
 	p.x = 2; p.y = 5; p.height = 3; p.width = 5; p.color = apoganatz::colors::RED_BACKGROUND;
@@ -221,14 +221,15 @@ int main()
 
 	std::vector<apoganatz::CharInfo> info;
 	info.resize(16, apoganatz::CharInfo(L'木', apoganatz::colors::GREEN_BACKGROUND));
-	console.writeOutput(info, apoganatz::Rectangle(10, 10, 4, 4));
+	console.writeCharInfo(info, apoganatz::Rectangle(10, 10, 4, 4));
 
 	// I expect giberish on 16 bit wchar_t compilers like windows. Also a compile warning.
 	info.assign(16, apoganatz::CharInfo(L'𐐷', apoganatz::colors::GREEN_BACKGROUND));
-	console.writeOutput(info, apoganatz::Rectangle(15, 15, 4, 4));
+	console.writeCharInfo(info, apoganatz::Rectangle(15, 15, 4, 4));
 	//Don't exit
 	console.setCTRLCHandler(cntrlIsHit);
 	console.writeString(L"Press CNTRL-C to exit", a::colors::BLUE_TEXT, a::Coordinate(0, 12));
+	console.refresh();
 	while (cntrlHit == false);
 	
 	

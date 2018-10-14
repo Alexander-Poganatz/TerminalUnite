@@ -26,7 +26,7 @@ namespace apoganatz
 		wchar_t ch; // The char to write to the console.
 		int color; // The color from the color namespace.
 
-		CharInfo(wchar_t c, int co) : ch(c), color(co) {}
+		CharInfo(wchar_t c = L' ', int co = 0) : ch(c), color(co) {}
 	};
 
 	// Specifies the x,y coordinate on the screen to start writing info.
@@ -163,15 +163,15 @@ namespace apoganatz
 
 		/**
 			@fn writeCharactors
-			@brief writes a number of CharInfo to the console
+			@brief writes a number of CharInfo to the buffer
 			@param ch [in] the char and color to write
 			@param num [in] the numer of ch to write
 			@param pos [in] the position to start writing
 		*/
-		virtual void writeCharactors(CharInfo ch, int num, Coordinate pos) = 0;
+		virtual void writeCharInfo(CharInfo ch, int num, Coordinate pos) = 0;
 		/**
 			@fn writeString
-			@brief writes a string to the console
+			@brief writes a string to the buffer
 			@param str [in] the string to write
 			@param color [in] the color to write
 			@param pos [in] the position to start writing
@@ -179,11 +179,11 @@ namespace apoganatz
 		virtual void writeString(std::wstring const& str, int color, Coordinate pos) = 0;
 		/**
 			@fn writeOutput
-			@brief writes a vector of CharInfo to the console
+			@brief writes a vector of CharInfo to the buffer
 			@param buffer [in] the values to write
 			@param pos [in] the area to write to in the console. The width * height of the area should equal the buffer size.
 		*/
-		virtual void writeOutput(std::vector<CharInfo> const& buffer, Rectangle area) = 0;
+		virtual void writeCharInfo(std::vector<CharInfo> const& buffer, Rectangle area) = 0;
 
 		/**
 			@fn getInput
@@ -198,6 +198,11 @@ namespace apoganatz
 			@param fn [in] the function to execute
 		*/
 		virtual void setCTRLCHandler(void(*fn)(void)) = 0;
+
+		/**
+			Prints the buffer to the console.
+		*/
+		virtual void refresh() = 0;
 	};
 
 	// To be implemented in the platform specific cpp

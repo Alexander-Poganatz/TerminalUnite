@@ -165,7 +165,7 @@ namespace apoganatz
 			resizeterm(height, width);
 		}
 
-		void writeCharactors(CharInfo ch, int num, Coordinate pos)
+		void writeCharInfo(CharInfo ch, int num, Coordinate pos)
 		{
 			auto cursPos = getCursorPosition();
 			move(pos.y, pos.x);
@@ -173,7 +173,6 @@ namespace apoganatz
 			for(int x = 0; x < num; ++x)
 				printCharAsUTF8String(ch.ch);
 			setCursorPosition(cursPos.x, cursPos.y);
-			refresh();
 		}
 
 		void writeString(std::wstring const& str, int color, Coordinate pos)
@@ -185,10 +184,9 @@ namespace apoganatz
 			for(auto c : str)
 				printCharAsUTF8String(c);
 			setCursorPosition(cursPos.x, cursPos.y);
-			refresh();
 		}
 
-		void writeOutput(std::vector<CharInfo> const& buffer, Rectangle area)
+		void writeCharInfo(std::vector<CharInfo> const& buffer, Rectangle area)
 		{
 			auto cursPos = getCursorPosition();
 			int index = 0;
@@ -203,7 +201,6 @@ namespace apoganatz
 				}
 			}
 			setCursorPosition(cursPos.x, cursPos.y);
-			refresh();
 		}
 
 		size_t getInput(std::vector<InputEvent> & buffer)
@@ -401,6 +398,10 @@ namespace apoganatz
 				sigaction(SIGINT, &sa, NULL);
 			}			
 			f = fn;
+		}
+		
+		void refresh() {
+			::refresh();
 		}
 	}; // end class	
 			
