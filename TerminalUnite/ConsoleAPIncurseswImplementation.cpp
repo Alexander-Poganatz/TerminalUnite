@@ -165,7 +165,7 @@ namespace apoganatz
 			resizeterm(height, width);
 		}
 
-		void writeCharactors(CharInfo ch, int num, Coordinate pos)
+		void writeCharInfo(CharInfo ch, int num, Coordinate pos)
 		{
 			auto cursPos = getCursorPosition();
 			move(pos.y, pos.x);
