@@ -8,25 +8,25 @@
 	@date 2018-04-27
 	@brief Generic panel to be drawn to the console
 */
+#include <InputHandler.hpp>
 
-#include <ConsoleAPI.hpp>
-
-namespace apoganatz
+namespace ca_poganatz
 {
 	class Panel
 	{
+	private: 
+		InputHandler* inputHandler;
 	protected:
 		IConsoleAPI& consoleRef;
-
 	public:
 		short x;
 		short y;
 		short height;
 		short width;
 		int color;
-		short priority;
+		short z_index;
 
-		Panel() : x(0), y(0), height(1), width(1), priority(0), color(colors::WHITE_TEXT),  consoleRef(getConsoleInstance()) {}
+		Panel() : x(0), y(0), height(1), width(1), z_index(0), color(colors::WHITE_TEXT), consoleRef(getConsoleInstance()), inputHandler(&DefaultInputHandler){}
 		virtual ~Panel() {}
 		
 		/**
@@ -39,17 +39,30 @@ namespace apoganatz
 		inline bool doesIntersect(short sx, short sy) { return sx >= x && sx <= x + width && sy >= y && sy <= y + height; }
 
 		/**
-			@fn handleInput
-			@brief Handles the input given, used for subclasses to override.
-			@param InputEvent [in] The mouse/keyboard data from the event.
+			@fn handleMouseInput
+			@brief Handles the mouse input given
+			@param InputEvent [in] The mouse data from the event.
+			@param eventOptions [mutable] The event flow options
 		*/
-		virtual void handleInput(InputEvent input) {}
+		virtual void handleMouseInput(InputEvent const& input, InputHandlerData eventOptions) {
+			this->inputHandler->handleMouseInput(input, eventOptions);
+		}
+
+		/**
+			@fn handleKeyboardInput
+			@brief Handles the keyboard input given
+			@param InputEvent [in] The mouse data from the event.
+			@param eventOptions [mutable] The event flow options
+		*/
+		virtual void handleKeyboardInput(InputEvent const& input, InputHandlerData eventOptions) {
+			this->inputHandler->handleMouseInput(input, eventOptions);
+		}
 
 		/**
 			@fn render
 			@brief Displays a blank panel with the given color to the console.
 		*/
-		virtual void render() 
+		virtual void writeToConsoleBuffer() 
 		{
 			for (short h = 0; h < height; ++h)
 			{

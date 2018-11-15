@@ -15,7 +15,7 @@
 #include <Windows.h>
 #include <algorithm>
 
-namespace apoganatz
+namespace ca_poganatz
 {
 	void (*ctrlFuncToExecute)(void) = nullptr;
 	BOOL SimpleCntlHandler(DWORD ctrlType)
