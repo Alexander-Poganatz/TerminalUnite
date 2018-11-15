@@ -15,7 +15,7 @@ namespace ca_poganatz
 	class Panel
 	{
 	private: 
-		InputHandler* inputHandler;
+		InputHandler& inputHandler;
 	protected:
 		IConsoleAPI& consoleRef;
 	public:
@@ -26,7 +26,7 @@ namespace ca_poganatz
 		int color;
 		short z_index;
 
-		Panel() : x(0), y(0), height(1), width(1), z_index(0), color(colors::WHITE_TEXT), consoleRef(getConsoleInstance()), inputHandler(&DefaultInputHandler){}
+		Panel() : x(0), y(0), height(1), width(1), z_index(0), color(colors::WHITE_TEXT), consoleRef(getConsoleInstance()), inputHandler(DefaultInputHandler){}
 		virtual ~Panel() {}
 		
 		/**
@@ -45,7 +45,7 @@ namespace ca_poganatz
 			@param eventOptions [mutable] The event flow options
 		*/
 		virtual void handleMouseInput(InputEvent const& input, InputHandlerData eventOptions) {
-			this->inputHandler->handleMouseInput(input, eventOptions);
+			this->inputHandler.handleMouseInput(input, eventOptions);
 		}
 
 		/**
@@ -55,7 +55,16 @@ namespace ca_poganatz
 			@param eventOptions [mutable] The event flow options
 		*/
 		virtual void handleKeyboardInput(InputEvent const& input, InputHandlerData eventOptions) {
-			this->inputHandler->handleMouseInput(input, eventOptions);
+			this->inputHandler.handleMouseInput(input, eventOptions);
+		}
+
+		/**
+			@fn setInputHandler
+			@brief sets the input handler to be processed
+			@param InputHandler [in] The handler to set
+		*/
+		inline void setInputHandler(InputHandler& handler) {
+			this->inputHandler = handler;
 		}
 
 		/**
