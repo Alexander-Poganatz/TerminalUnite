@@ -15,7 +15,7 @@
 #include <string>
 #include <vector>
 
-namespace apoganatz
+namespace ca_poganatz
 {
 
 	/**

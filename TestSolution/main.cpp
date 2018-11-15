@@ -4,7 +4,7 @@
 #include <Panel.hpp>
 #include <thread>
 #include <list>
-namespace a = apoganatz;
+namespace a = ca_poganatz;
 
 volatile bool cntrlHit = false;
 void cntrlIsHit()
@@ -15,8 +15,8 @@ void cntrlIsHit()
 // Testing to see what happens when an instance is created before main() is even ran
 struct GlobalInstanceTester
 {
-	apoganatz::IConsoleAPI& ref;
-	GlobalInstanceTester() : ref(apoganatz::getConsoleInstance()) {};
+	ca_poganatz::IConsoleAPI& ref;
+	GlobalInstanceTester() : ref(ca_poganatz::getConsoleInstance()) {};
 };
 
 GlobalInstanceTester instance;
@@ -31,8 +31,8 @@ void printTestInput(std::wstring const& s)
 	auto iter = list.begin();
 	for (size_t y = 0; y < list.size(); ++y)
 	{
-		instance.ref.writeCharInfo(apoganatz::CharInfo(L' ', apoganatz::colors::WHITE_BACKGROUND), 40, apoganatz::Coordinate(printTestInputX, (short)y));
-		instance.ref.writeString(*iter, apoganatz::colors::WHITE_BACKGROUND, apoganatz::Coordinate(printTestInputX, (short)y));
+		instance.ref.writeCharInfo(ca_poganatz::CharInfo(L' ', ca_poganatz::colors::WHITE_BACKGROUND), 40, ca_poganatz::Coordinate(printTestInputX, (short)y));
+		instance.ref.writeString(*iter, ca_poganatz::colors::WHITE_BACKGROUND, ca_poganatz::Coordinate(printTestInputX, (short)y));
 		++iter;
 	}
 	instance.ref.refresh();
@@ -40,7 +40,7 @@ void printTestInput(std::wstring const& s)
 
 void testInput()
 {
-	std::vector<apoganatz::InputEvent> events(128);
+	std::vector<ca_poganatz::InputEvent> events(128);
 	size_t numOfEvents;
 	bool notQuiting = true;
 	printTestInput(L"Beginning input test, press Esc to exit.");
@@ -206,26 +206,26 @@ void testInput()
 int main()
 {
 
-	apoganatz::IConsoleAPI& console = apoganatz::getConsoleInstance();
+	ca_poganatz::IConsoleAPI& console = ca_poganatz::getConsoleInstance();
 
 	testInput();
 
-	console.writeString(L"Hello World!", apoganatz::colors::BLUE_BACKGROUND, apoganatz::Coordinate(0,0));
+	console.writeString(L"Hello World!", ca_poganatz::colors::BLUE_BACKGROUND, ca_poganatz::Coordinate(0,0));
 
-	console.writeCharInfo(apoganatz::CharInfo(L'A', apoganatz::colors::WHITE_BACKGROUND), 5, apoganatz::Coordinate(1, 1));
+	console.writeCharInfo(ca_poganatz::CharInfo(L'A', ca_poganatz::colors::WHITE_BACKGROUND), 5, ca_poganatz::Coordinate(1, 1));
 
-	apoganatz::Panel p;
-	p.x = 2; p.y = 5; p.height = 3; p.width = 5; p.color = apoganatz::colors::RED_BACKGROUND;
-	p.render();
+	ca_poganatz::Panel p;
+	p.x = 2; p.y = 5; p.height = 3; p.width = 5; p.color = ca_poganatz::colors::RED_BACKGROUND;
+	p.writeToConsoleBuffer();
 
 
-	std::vector<apoganatz::CharInfo> info;
-	info.resize(16, apoganatz::CharInfo(L'木', apoganatz::colors::GREEN_BACKGROUND));
-	console.writeCharInfo(info, apoganatz::Rectangle(10, 10, 4, 4));
+	std::vector<ca_poganatz::CharInfo> info;
+	info.resize(16, ca_poganatz::CharInfo(L'木', ca_poganatz::colors::GREEN_BACKGROUND));
+	console.writeCharInfo(info, ca_poganatz::Rectangle(10, 10, 4, 4));
 
 	// I expect giberish on 16 bit wchar_t compilers like windows. Also a compile warning.
-	info.assign(16, apoganatz::CharInfo(L'𐐷', apoganatz::colors::GREEN_BACKGROUND));
-	console.writeCharInfo(info, apoganatz::Rectangle(15, 15, 4, 4));
+	info.assign(16, ca_poganatz::CharInfo(L'𐐷', ca_poganatz::colors::GREEN_BACKGROUND));
+	console.writeCharInfo(info, ca_poganatz::Rectangle(15, 15, 4, 4));
 	//Don't exit
 	console.setCTRLCHandler(cntrlIsHit);
 	console.writeString(L"Press CNTRL-C to exit", a::colors::BLUE_TEXT, a::Coordinate(0, 12));

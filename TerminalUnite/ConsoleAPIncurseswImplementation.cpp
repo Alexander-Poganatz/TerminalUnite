@@ -7,7 +7,7 @@
 #include <memory>
 #include <signal.h>
 #include <bitset>
-namespace apoganatz
+namespace ca_poganatz
 {
 	namespace colors
 	{

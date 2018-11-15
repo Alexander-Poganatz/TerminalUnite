@@ -159,6 +159,7 @@
   <ItemGroup>
     <ClInclude Include="..\output\include\ConsoleAPI.hpp" />
     <ClInclude Include="..\output\include\Panel.hpp" />
+    <ClInclude Include="..\output\include\InputHandler.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ConsoleAPIWindowsImplementation.cpp" />
