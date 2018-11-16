@@ -158,6 +158,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\output\include\ConsoleAPI.hpp" />
+    <ClInclude Include="..\output\include\ObserverPattern.hpp" />
     <ClInclude Include="..\output\include\Panel.hpp" />
     <ClInclude Include="..\output\include\InputHandler.hpp" />
   </ItemGroup>
