@@ -4,6 +4,7 @@
 #include <Panel.hpp>
 #include <thread>
 #include <list>
+#include <TextPanel.hpp>
 namespace a = ca_poganatz;
 
 volatile bool cntrlHit = false;
@@ -229,6 +230,11 @@ int main()
 	//Don't exit
 	console.setCTRLCHandler(cntrlIsHit);
 	console.writeString(L"Press CNTRL-C to exit", a::colors::BLUE_TEXT, a::Coordinate(0, 12));
+
+	a::TSubject<std::wstring> state(L"Exit");
+	a::TextPanel textPanel(20, 15, 6, 3, a::colors::WHITE_BACKGROUND, 0, &state, a::H_ALIGN_CENTER, a::V_ALIGN_CENTER);
+	textPanel.writeToConsoleBuffer();
+
 	console.refresh();
 	while (cntrlHit == false);
 	
