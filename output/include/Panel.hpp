@@ -12,6 +12,12 @@
 
 namespace ca_poganatz
 {
+	/*
+		Text alignment enums.
+	*/
+	enum HORIZONTAL_ALIGNMENT { H_ALIGN_LEFT, H_ALIGN_CENTER };
+	enum VERTICAL_ALIGNMENT { V_ALIGN_TOP, V_ALIGN_CENTER };
+
 	class Panel
 	{
 	private: 
@@ -27,6 +33,10 @@ namespace ca_poganatz
 		short z_index;
 
 		Panel() : x(0), y(0), height(1), width(1), z_index(0), color(colors::WHITE_TEXT), consoleRef(getConsoleInstance()), inputHandler(DefaultInputHandler){}
+		Panel(short x, short y, short width, short height, int color, short z_index = 0) : Panel()
+		{
+			this->x = x; this->y = y; this->width = width; this->height = height; this->color = color; this->z_index = z_index;
+		}
 		virtual ~Panel() {}
 		
 		/**

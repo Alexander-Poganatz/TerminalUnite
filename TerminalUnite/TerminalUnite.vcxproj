@@ -161,9 +161,12 @@
     <ClInclude Include="..\output\include\ObserverPattern.hpp" />
     <ClInclude Include="..\output\include\Panel.hpp" />
     <ClInclude Include="..\output\include\InputHandler.hpp" />
+    <ClInclude Include="..\output\include\TextPanel.hpp" />
+    <ClInclude Include="..\output\include\Utility.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ConsoleAPIWindowsImplementation.cpp" />
+    <ClCompile Include="TextPanel.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

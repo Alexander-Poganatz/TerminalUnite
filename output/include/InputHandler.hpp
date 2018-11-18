@@ -25,7 +25,9 @@ namespace ca_poganatz
 			@param eventOptions [mutable] The event flow options
 		*/
 		virtual void handleKeyboardInput(InputEvent const & input, InputHandlerData & eventOptions) { };
-	} DefaultInputHandler;
+	};
+
+	extern InputHandler DefaultInputHandler;
 
 
 }

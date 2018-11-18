@@ -27,9 +27,18 @@
     <ClInclude Include="..\output\include\ObserverPattern.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\output\include\TextPanel.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\output\include\Utility.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ConsoleAPIWindowsImplementation.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TextPanel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
