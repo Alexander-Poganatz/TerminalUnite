@@ -21,9 +21,10 @@ namespace ca_poganatz
 	class Panel
 	{
 	private: 
-		InputHandler& inputHandler;
+		
 	protected:
 		IConsoleAPI& consoleRef;
+		InputHandler& inputHandler;
 	public:
 		short x;
 		short y;
@@ -54,7 +55,8 @@ namespace ca_poganatz
 			@param InputEvent [in] The mouse data from the event.
 			@param eventOptions [mutable] The event flow options
 		*/
-		virtual void handleMouseInput(InputEvent const& input, InputHandlerData eventOptions) {
+		virtual void handleMouseInput(InputEvent const& input, InputHandlerData eventOptions) 
+		{
 			this->inputHandler.handleMouseInput(input, eventOptions);
 		}
 
@@ -64,8 +66,27 @@ namespace ca_poganatz
 			@param InputEvent [in] The mouse data from the event.
 			@param eventOptions [mutable] The event flow options
 		*/
-		virtual void handleKeyboardInput(InputEvent const& input, InputHandlerData eventOptions) {
+		virtual void handleKeyboardInput(InputEvent const& input, InputHandlerData eventOptions) 
+		{
 			this->inputHandler.handleMouseInput(input, eventOptions);
+		}
+
+		/**
+			@fn handleFocusGain
+			@brief Handles the focus gain event
+		*/
+		virtual void handleFocusGain() 
+		{
+			this->inputHandler.gotFocus();
+		}
+
+		/**
+			@fn handleFocusLost
+			@brief Handles the focus lost event
+		*/
+		virtual void handleFocusLost() 
+		{
+			this->inputHandler.lostFocus();
 		}
 
 		/**

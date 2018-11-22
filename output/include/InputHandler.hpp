@@ -25,6 +25,18 @@ namespace ca_poganatz
 			@param eventOptions [mutable] The event flow options
 		*/
 		virtual void handleKeyboardInput(InputEvent const & input, InputHandlerData & eventOptions) { };
+
+		/**
+			@fn gotFocus
+			@brief Event to be fired when this panel gets input
+		*/
+		virtual void gotFocus() {}
+
+		/**
+			@fn lostFocus
+			@brief Event to be fired when the panel loses focus
+		*/
+		virtual void lostFocus() {}
 	};
 
 	extern InputHandler DefaultInputHandler;

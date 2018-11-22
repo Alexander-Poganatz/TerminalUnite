@@ -1,11 +1,11 @@
 /**
-	@file TextPanel.cpp
+	@file TextBox.cpp
 	@brief Impelmentation of TextPanel
 	@author Alexander Poganatz
 	@author a_poganatz@outlook.com
 	@date 2018-11-18
 */
-#include <TextPanel.hpp>
+#include <TextBlock.hpp>
 #include <locale>
 #include <Utility.hpp>
 
@@ -14,7 +14,7 @@ namespace ca_poganatz
 	// Shoved this here for now
 	InputHandler DefaultInputHandler;
 
-	void TextPanel::updateOutputBuffer()
+	void TextBlock::updateOutputBuffer()
 	{
 		std::wstring textStateCopy(state->getState());
 		CharInfo defaultCharInfo;

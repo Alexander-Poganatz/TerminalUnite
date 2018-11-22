@@ -2,7 +2,7 @@
 #define TEXT_PANEL_HPP
 
 /**
-	@fn TextPanel.hpp
+	@fn TextBlock.hpp
 	@brief Implementation of a TextPanel object
 	@author Alexander Poganatz
 	@author a_poganatz@outlook.com
@@ -14,7 +14,7 @@
 
 namespace ca_poganatz 
 {
-	class TextPanel : public Panel, public Observer
+	class TextBlock : public Panel, public Observer
 	{
 	private:
 		TSubject<std::wstring>* state;
@@ -22,8 +22,8 @@ namespace ca_poganatz
 		VERTICAL_ALIGNMENT vAlignment; //! The vertical alignment of the text
 		std::vector<CharInfo> buffer;
 	public:
-		TextPanel() = delete;
-		TextPanel(short x, short y, short width, short height, int color, short z_index, TSubject<std::wstring>* pSubject, 
+		TextBlock() = delete;
+		TextBlock(short x, short y, short width, short height, int color, short z_index, TSubject<std::wstring>* pSubject, 
 			HORIZONTAL_ALIGNMENT hAlign = H_ALIGN_LEFT, VERTICAL_ALIGNMENT vAlign= V_ALIGN_TOP) : Panel(x, y, width, height, color, z_index) 
 		{
 			this->state = pSubject;
