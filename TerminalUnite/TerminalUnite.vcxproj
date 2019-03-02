@@ -157,6 +157,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\output\include\App.hpp" />
     <ClInclude Include="..\output\include\ConsoleAPI.hpp" />
     <ClInclude Include="..\output\include\ObserverPattern.hpp" />
     <ClInclude Include="..\output\include\Panel.hpp" />
@@ -166,6 +167,7 @@
     <ClInclude Include="..\output\include\Utility.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="App.cpp" />
     <ClCompile Include="ConsoleAPIWindowsImplementation.cpp" />
     <ClCompile Include="TextBlock.cpp" />
     <ClCompile Include="TextBox.cpp" />
