@@ -37,6 +37,9 @@ namespace ca_poganatz
 			@brief Event to be fired when the panel loses focus
 		*/
 		virtual void lostFocus() {}
+		
+		InputHandler() {}
+		virtual ~InputHandler() {};
 	};
 
 	extern InputHandler DefaultInputHandler;

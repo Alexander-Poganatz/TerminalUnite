@@ -31,6 +31,8 @@ namespace ca_poganatz
 		std::sort(panels.begin(), panels.end(), [](Panel* left, Panel* right) { return left->z_index > right->z_index; });
 	}
 
+	static Panel defaultFocusedPanel;
+
 	App::App() 
 	{
 		if (appInstance)
@@ -40,6 +42,7 @@ namespace ca_poganatz
 		inputBuffer.resize(128);
 
 		defaultRunFlag = true;
+		focusedPanel = &defaultFocusedPanel;
 
 		appInstance = this;
 	}
@@ -47,6 +50,11 @@ namespace ca_poganatz
 	void App::PaintPanels() 
 	{
 		sortPanelsForPainting();
+		for (auto panel : this->panels) 
+			panel->writeToConsoleBuffer();
+		
+		getConsoleInstance().refresh();
+
 	}
 
 	static bool isMouseEvent(EventCode code) 
@@ -71,17 +79,37 @@ namespace ca_poganatz
 	void App::ReadAndHandleConsoleInput()
 	{
 		sortPanelsForInput();
-		InputHandlerData data;
 		size_t numOfEvents = getConsoleInstance().getInput(this->inputBuffer);
 		for (size_t index = 0; index < numOfEvents; ++index)
 		{
+			InputHandlerData data;
+			bool focusedIsSet = false;
 			if (isMouseEvent(inputBuffer[index].eventCode)) {
 				for (auto panel : panels) {
-
+					if (panel->doesIntersect(this->inputBuffer[index].x, this->inputBuffer[index].y)) {
+						if (!focusedIsSet && this->focusedPanel != panel)
+						{
+							this->focusedPanel->handleFocusLost();
+							this->focusedPanel = panel;
+							panel->handleFocusGain();
+						}
+						focusedIsSet = true;
+						panel->handleMouseInput(this->inputBuffer[index], data);
+						if (data.stopBubbling)
+							break; // break out of panel loop
+					}
 				}
 			}
 			else {
-				// do intersecting logic
+				for (auto panel : panels)
+				{
+					if (panel->doesIntersect(focusedPanel->x, focusedPanel->y))
+					{
+						panel->handleKeyboardInput(this->inputBuffer[index], data);
+						if (data.stopBubbling)
+							break;
+					}
+				}
 			}
 		}
 	}

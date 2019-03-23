@@ -6,13 +6,8 @@
 #include <list>
 #include <TextBlock.hpp>
 #include <App.hpp>
+#include <TextBox.hpp>
 namespace a = ca_poganatz;
-
-volatile bool cntrlHit = false;
-void cntrlIsHit()
-{
-	cntrlHit = true;
-}
 
 // Testing to see what happens when an instance is created before main() is even ran
 struct GlobalInstanceTester
@@ -204,7 +199,14 @@ void testInput()
 	}
 	
 }
+
 namespace ca_poganatz {
+	struct ExitHandler : public InputHandler {
+		void handleMouseInput(InputEvent const& input, InputHandlerData& eventOptions) override {
+			a::App::SetDefaultRunFlagToFalse();
+		}
+	};
+
 	class Test : public App {
 	public:
 		int Execute() override {
@@ -229,16 +231,28 @@ namespace ca_poganatz {
 			info.assign(16, ca_poganatz::CharInfo(L'𐐷', ca_poganatz::colors::GREEN_BACKGROUND));
 			console.writeCharInfo(info, ca_poganatz::Rectangle(15, 15, 4, 4));
 			//Don't exit
-			console.setCTRLCHandler(cntrlIsHit);
 			console.writeString(L"Press CNTRL-C to exit", a::colors::BLUE_TEXT, a::Coordinate(0, 12));
 
 			a::TSubject<std::wstring> state(L"Exit");
 			a::TextBlock textPanel(20, 15, 6, 3, a::colors::WHITE_BACKGROUND, 0, &state, a::H_ALIGN_CENTER, a::V_ALIGN_CENTER);
 			textPanel.writeToConsoleBuffer();
 
-			console.refresh();
-			while (cntrlHit == false);
+			a::TextBox textBox(30, 20, 10, a::colors::WHITE_BACKGROUND, 10, &state);
+			this->AddPanel(&textBox);
+			
+			this->AddPanel(&textPanel);
+			ExitHandler exitHandler;
+			textPanel.setInputHandler(&exitHandler);
 
+			console.refresh();
+			console.setCTRLCHandler(App::SetDefaultRunFlagToFalse);
+			state.attach(&textBox);
+			state.attach(&textPanel);
+			while (this->GetDefaultRunFlag()) 
+			{
+				this->ReadAndHandleConsoleInput();
+				this->PaintPanels();
+			}
 
 			console.writeString(L"CNTRL-C hit", a::colors::BLUE_TEXT, a::Coordinate(0, 13));
 			std::this_thread::sleep_for(std::chrono::seconds(2));

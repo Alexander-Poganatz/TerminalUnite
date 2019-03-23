@@ -199,7 +199,7 @@ namespace ca_poganatz
 		{
 
 			short writePosition = (pos.y * consoleWidth) + pos.x;
-			for (size_t x = 0; x < str.size(); ++x)
+			for (size_t x = 0; x < str.size() && (x + writePosition) < outputBuffer.size(); ++x)
 			{
 				outputBuffer[x + writePosition].Char.UnicodeChar = str[x];
 				outputBuffer[x + writePosition].Attributes = color;
