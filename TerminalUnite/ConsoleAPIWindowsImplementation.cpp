@@ -188,10 +188,11 @@ namespace ca_poganatz
 		virtual void writeCharInfo(CharInfo ch, int num, Coordinate pos) override
 		{
 			short writePosition = (pos.y * consoleWidth) + pos.x;
-			for (int x = 0; x < num; ++x) 
+			size_t oIndex;
+			for (int x = 0; x < num && (oIndex = x + writePosition) < outputBuffer.size(); ++x)
 			{
-				outputBuffer[x + writePosition].Char.UnicodeChar = ch.ch;
-				outputBuffer[x + writePosition].Attributes = ch.color;
+				outputBuffer[oIndex].Char.UnicodeChar = ch.ch;
+				outputBuffer[oIndex].Attributes = ch.color;
 			}
 		};
 
@@ -199,22 +200,24 @@ namespace ca_poganatz
 		{
 
 			short writePosition = (pos.y * consoleWidth) + pos.x;
-			for (size_t x = 0; x < str.size() && (x + writePosition) < outputBuffer.size(); ++x)
+			size_t oIndex;
+			for (size_t x = 0; x < str.size() && (oIndex = (x + writePosition)) < outputBuffer.size(); ++x)
 			{
-				outputBuffer[x + writePosition].Char.UnicodeChar = str[x];
-				outputBuffer[x + writePosition].Attributes = color;
+				outputBuffer[oIndex].Char.UnicodeChar = str[x];
+				outputBuffer[oIndex].Attributes = color;
 			}
 		};
 
 		virtual void writeCharInfo(std::vector<CharInfo> const& buffer, Rectangle area) override
 		{
 			size_t bufferIndex = 0;
+			size_t pos;
 			for (short y = 0; y < area.height; ++y) 
 			{
-				for (short x = 0; x < area.width; ++x)
+				for (short x = 0; x < area.width && (pos = ((area.y + y) * consoleWidth) + x + area.x) < outputBuffer.size() && bufferIndex < buffer.size(); ++x)
 				{
-					outputBuffer[((area.y + y) * consoleWidth) + x + area.x].Char.UnicodeChar = buffer[bufferIndex].ch;
-					outputBuffer[((area.y + y) * consoleWidth) + x + area.x].Attributes = buffer[bufferIndex].color;
+					outputBuffer[pos].Char.UnicodeChar = buffer[bufferIndex].ch;
+					outputBuffer[pos].Attributes = buffer[bufferIndex].color;
 					++bufferIndex;
 				}
 			}
