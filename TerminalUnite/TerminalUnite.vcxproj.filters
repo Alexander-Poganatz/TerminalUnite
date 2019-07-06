@@ -36,6 +36,9 @@
     <ClInclude Include="..\output\include\TextBox.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\output\include\App.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ConsoleAPIWindowsImplementation.cpp">
@@ -45,6 +48,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="TextBox.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="App.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -30,6 +30,7 @@ namespace ca_poganatz
 			this->state = pSubject;
 			if (state != nullptr)
 				this->privateContent = state->getState();
+			this->oldCurserState = false;
 		}
 
 		virtual ~TextBox() {}

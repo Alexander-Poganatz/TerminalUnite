@@ -232,7 +232,8 @@ namespace ca_poganatz {
 			console.writeCharInfo(info, ca_poganatz::Rectangle(15, 15, 4, 4));
 			//Don't exit
 			console.writeString(L"Press CNTRL-C to exit", a::colors::BLUE_TEXT, a::Coordinate(0, 12));
-
+			console.writeCharInfo(CharInfo(0xd83c, colors::BLUE_BACKGROUND), 1, Coordinate(0, 13));
+			console.writeCharInfo(CharInfo(0xdf55, colors::BLUE_BACKGROUND), 1, Coordinate(1, 13));
 			a::TSubject<std::wstring> state(L"Exit");
 			a::TextBlock textPanel(20, 15, 6, 3, a::colors::WHITE_BACKGROUND, 0, &state, a::H_ALIGN_CENTER, a::V_ALIGN_CENTER);
 			textPanel.writeToConsoleBuffer();
@@ -243,6 +244,9 @@ namespace ca_poganatz {
 			this->AddPanel(&textPanel);
 			ExitHandler exitHandler;
 			textPanel.setInputHandler(&exitHandler);
+
+			Panel defaultPanel(30, 10, 10, 10, colors::WHITE_BACKGROUND, -1);
+			this->AddPanel(&defaultPanel);
 
 			console.refresh();
 			console.setCTRLCHandler(App::SetDefaultRunFlagToFalse);

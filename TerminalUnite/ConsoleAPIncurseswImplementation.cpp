@@ -160,6 +160,13 @@ namespace ca_poganatz
 			curs_set(visibility);
 		}
 
+		bool getCursorVisibility() override 
+		{
+			int visibility = curs_set(0);
+			curs_set(visibility);
+			return visibility == ERR ? 0 : visibility == 0 
+		}
+
 		void setSize(short width, short height)
 		{
 			resizeterm(height, width);

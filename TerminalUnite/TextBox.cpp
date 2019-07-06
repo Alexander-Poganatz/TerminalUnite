@@ -99,13 +99,14 @@ namespace ca_poganatz
 
 	void TextBox::handleFocusGain()
 	{
+		this->oldCurserState = consoleRef.getCursorVisibility();
 		consoleRef.setCursorVisibility(true);
 		this->inputHandler->gotFocus();
 	}
 
 	void TextBox::handleFocusLost()
 	{
-		consoleRef.setCursorVisibility(false);
+		consoleRef.setCursorVisibility(this->oldCurserState);
 		this->state->setState(this->privateContent);
 		this->inputHandler->lostFocus();
 	}
