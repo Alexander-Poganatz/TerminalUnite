@@ -5,13 +5,9 @@
 #include <thread>
 #include <list>
 #include <TextBlock.hpp>
+#include <App.hpp>
+#include <TextBox.hpp>
 namespace a = ca_poganatz;
-
-volatile bool cntrlHit = false;
-void cntrlIsHit()
-{
-	cntrlHit = true;
-}
 
 // Testing to see what happens when an instance is created before main() is even ran
 struct GlobalInstanceTester
@@ -204,42 +200,67 @@ void testInput()
 	
 }
 
-int main()
-{
+namespace ca_poganatz {
+	struct ExitHandler : public InputHandler {
+		void handleMouseInput(InputEvent const& input, InputHandlerData& eventOptions) override {
+			a::App::SetDefaultRunFlagToFalse();
+		}
+	};
 
-	ca_poganatz::IConsoleAPI& console = ca_poganatz::getConsoleInstance();
+	class Test : public App {
+	public:
+		int Execute() override {
+			ca_poganatz::IConsoleAPI& console = ca_poganatz::getConsoleInstance();
 
-	testInput();
+			testInput();
 
-	console.writeString(L"Hello World!", ca_poganatz::colors::BLUE_BACKGROUND, ca_poganatz::Coordinate(0,0));
+			console.writeString(L"Hello World!", ca_poganatz::colors::BLUE_BACKGROUND, ca_poganatz::Coordinate(0, 0));
 
-	console.writeCharInfo(ca_poganatz::CharInfo(L'A', ca_poganatz::colors::WHITE_BACKGROUND), 5, ca_poganatz::Coordinate(1, 1));
+			console.writeCharInfo(ca_poganatz::CharInfo(L'A', ca_poganatz::colors::WHITE_BACKGROUND), 5, ca_poganatz::Coordinate(1, 1));
 
-	ca_poganatz::Panel p;
-	p.x = 2; p.y = 5; p.height = 3; p.width = 5; p.color = ca_poganatz::colors::RED_BACKGROUND;
-	p.writeToConsoleBuffer();
+			ca_poganatz::Panel p;
+			p.x = 2; p.y = 5; p.height = 3; p.width = 5; p.color = ca_poganatz::colors::RED_BACKGROUND;
+			p.writeToConsoleBuffer();
 
 
-	std::vector<ca_poganatz::CharInfo> info;
-	info.resize(16, ca_poganatz::CharInfo(L'木', ca_poganatz::colors::GREEN_BACKGROUND));
-	console.writeCharInfo(info, ca_poganatz::Rectangle(10, 10, 4, 4));
+			std::vector<ca_poganatz::CharInfo> info;
+			info.resize(16, ca_poganatz::CharInfo(L'木', ca_poganatz::colors::GREEN_BACKGROUND));
+			console.writeCharInfo(info, ca_poganatz::Rectangle(10, 10, 4, 4));
 
-	// I expect giberish on 16 bit wchar_t compilers like windows. Also a compile warning.
-	info.assign(16, ca_poganatz::CharInfo(L'𐐷', ca_poganatz::colors::GREEN_BACKGROUND));
-	console.writeCharInfo(info, ca_poganatz::Rectangle(15, 15, 4, 4));
-	//Don't exit
-	console.setCTRLCHandler(cntrlIsHit);
-	console.writeString(L"Press CNTRL-C to exit", a::colors::BLUE_TEXT, a::Coordinate(0, 12));
+			// I expect giberish on 16 bit wchar_t compilers like windows. Also a compile warning.
+			info.assign(16, ca_poganatz::CharInfo(L'☠', ca_poganatz::colors::GREEN_BACKGROUND));
+			console.writeCharInfo(info, ca_poganatz::Rectangle(15, 15, 4, 4));
+			//Don't exit
+			console.writeString(L"Press CNTRL-C to exit", a::colors::BLUE_TEXT, a::Coordinate(0, 12));
+			console.writeCharInfo(CharInfo(0xd83c, colors::BLUE_BACKGROUND), 1, Coordinate(0, 13));
+			console.writeCharInfo(CharInfo(0xdf55, colors::BLUE_BACKGROUND), 1, Coordinate(1, 13));
+			a::TSubject<std::wstring> state(L"Exit");
+			a::TextBlock textPanel(20, 15, 6, 3, a::colors::WHITE_BACKGROUND, 0, &state, a::H_ALIGN_CENTER, a::V_ALIGN_CENTER);
+			textPanel.writeToConsoleBuffer();
 
-	a::TSubject<std::wstring> state(L"Exit");
-	a::TextBlock textPanel(20, 15, 6, 3, a::colors::WHITE_BACKGROUND, 0, &state, a::H_ALIGN_CENTER, a::V_ALIGN_CENTER);
-	textPanel.writeToConsoleBuffer();
+			a::TextBox textBox(30, 20, 10, a::colors::WHITE_BACKGROUND, 10, &state);
+			this->AddPanel(&textBox);
+			
+			this->AddPanel(&textPanel);
+			ExitHandler exitHandler;
+			textPanel.setInputHandler(&exitHandler);
 
-	console.refresh();
-	while (cntrlHit == false);
-	
-	
-	console.writeString(L"CNTRL-C hit", a::colors::BLUE_TEXT, a::Coordinate(0, 13));
-	std::this_thread::sleep_for(std::chrono::seconds(2));
-	return 0;
+			Panel defaultPanel(30, 10, 10, 10, colors::WHITE_BACKGROUND, -1);
+			this->AddPanel(&defaultPanel);
+
+			console.refresh();
+			console.setCTRLCHandler(App::SetDefaultRunFlagToFalse);
+			state.attach(&textBox);
+			state.attach(&textPanel);
+			while (this->GetDefaultRunFlag()) 
+			{
+				this->ReadAndHandleConsoleInput();
+				this->PaintPanels();
+			}
+
+			console.writeString(L"CNTRL-C hit", a::colors::BLUE_TEXT, a::Coordinate(0, 13));
+			std::this_thread::sleep_for(std::chrono::seconds(2));
+			return 0;
+		}
+	} myAppInstance;
 }

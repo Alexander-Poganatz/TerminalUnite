@@ -24,6 +24,17 @@ namespace ca_poganatz
 		bool oldCurserState;
 	public:
 
+		TextBox(short x, short y, short width, int color, short z_index, TSubject<std::wstring>* pSubject,
+			HORIZONTAL_ALIGNMENT hAlign = H_ALIGN_LEFT, VERTICAL_ALIGNMENT vAlign = V_ALIGN_TOP) : Panel(x, y, width, 1, color, z_index) 
+		{
+			this->state = pSubject;
+			if (state != nullptr)
+				this->privateContent = state->getState();
+			this->oldCurserState = false;
+		}
+
+		virtual ~TextBox() {}
+
 		virtual void update() override;
 
 		/**

@@ -133,6 +133,13 @@ namespace ca_poganatz
 		virtual ~IConsoleAPI() {};
 
 		/**
+			@fn getCursorVisibility
+			@brief gets a bool to determine if the console cursor is blinking
+			@return true if visible, false otherwise
+		*/
+		virtual bool getCursorVisibility() = 0;
+
+		/**
 			@fn setCurserVisibility
 			@brief sets the visiblity on the console to either visible or invisible
 			@param visibility [in] true is visible, false is to hide it

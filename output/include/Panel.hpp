@@ -24,7 +24,7 @@ namespace ca_poganatz
 		
 	protected:
 		IConsoleAPI& consoleRef;
-		InputHandler& inputHandler;
+		InputHandler* inputHandler;
 	public:
 		short x;
 		short y;
@@ -33,7 +33,7 @@ namespace ca_poganatz
 		int color;
 		short z_index;
 
-		Panel() : x(0), y(0), height(1), width(1), z_index(0), color(colors::WHITE_TEXT), consoleRef(getConsoleInstance()), inputHandler(DefaultInputHandler){}
+		Panel() : x(0), y(0), height(1), width(1), z_index(0), color(colors::WHITE_TEXT), consoleRef(getConsoleInstance()), inputHandler(&DefaultInputHandler){}
 		Panel(short x, short y, short width, short height, int color, short z_index = 0) : Panel()
 		{
 			this->x = x; this->y = y; this->width = width; this->height = height; this->color = color; this->z_index = z_index;
@@ -57,7 +57,7 @@ namespace ca_poganatz
 		*/
 		virtual void handleMouseInput(InputEvent const& input, InputHandlerData eventOptions) 
 		{
-			this->inputHandler.handleMouseInput(input, eventOptions);
+			this->inputHandler->handleMouseInput(input, eventOptions);
 		}
 
 		/**
@@ -68,7 +68,7 @@ namespace ca_poganatz
 		*/
 		virtual void handleKeyboardInput(InputEvent const& input, InputHandlerData eventOptions) 
 		{
-			this->inputHandler.handleMouseInput(input, eventOptions);
+			this->inputHandler->handleMouseInput(input, eventOptions);
 		}
 
 		/**
@@ -77,7 +77,7 @@ namespace ca_poganatz
 		*/
 		virtual void handleFocusGain() 
 		{
-			this->inputHandler.gotFocus();
+			this->inputHandler->gotFocus();
 		}
 
 		/**
@@ -86,7 +86,7 @@ namespace ca_poganatz
 		*/
 		virtual void handleFocusLost() 
 		{
-			this->inputHandler.lostFocus();
+			this->inputHandler->lostFocus();
 		}
 
 		/**
@@ -94,7 +94,7 @@ namespace ca_poganatz
 			@brief sets the input handler to be processed
 			@param InputHandler [in] The handler to set
 		*/
-		inline void setInputHandler(InputHandler& handler) {
+		inline void setInputHandler(InputHandler* handler) {
 			this->inputHandler = handler;
 		}
 

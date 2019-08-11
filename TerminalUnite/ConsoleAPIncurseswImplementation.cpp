@@ -160,6 +160,13 @@ namespace ca_poganatz
 			curs_set(visibility);
 		}
 
+		bool getCursorVisibility() override 
+		{
+			int visibility = curs_set(0);
+			curs_set(visibility);
+			return visibility == ERR ? 0 : visibility == 0; 
+		}
+
 		void setSize(short width, short height)
 		{
 			resizeterm(height, width);
@@ -189,10 +196,10 @@ namespace ca_poganatz
 		void writeCharInfo(std::vector<CharInfo> const& buffer, Rectangle area)
 		{
 			auto cursPos = getCursorPosition();
-			int index = 0;
+			size_t index = 0;
 			for(short y = area.y; y < (area.y + area.height); ++y)
 			{
-				move(y, area.x + area.width);
+				move(y, area.x);
 				for(short x = area.x; x < (area.x + area.width); ++x)
 				{
 					colors::setAttrColor(buffer[index].color);

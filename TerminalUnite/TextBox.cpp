@@ -8,11 +8,12 @@
 
 #include <TextBox.hpp>
 #include <algorithm>
+#include <wctype.h>
 namespace ca_poganatz 
 {
 	void TextBox::handleMouseInput(InputEvent const& input, InputHandlerData eventOptions)
 	{
-		this->inputHandler.handleMouseInput(input, eventOptions);
+		this->inputHandler->handleMouseInput(input, eventOptions);
 		if (!eventOptions.preventDefault) {
 			if (input.eventCode == EventCode::MOUSE_LEFT_CLICK)
 			{
@@ -30,7 +31,7 @@ namespace ca_poganatz
 
 	void TextBox::handleKeyboardInput(InputEvent const& input, InputHandlerData eventOptions)
 	{
-		this->inputHandler.handleMouseInput(input, eventOptions);
+		this->inputHandler->handleMouseInput(input, eventOptions);
 		if (!eventOptions.preventDefault) {
 			if (this->state != nullptr)
 			{
@@ -90,7 +91,8 @@ namespace ca_poganatz
 				consoleRef.writeString(s, this->color, outputPosition);
 				// place cursor in the control
 
-				Coordinate currentMousePosition{ this->x + xOffset - editControlAperture, this->y };
+
+				Coordinate currentMousePosition{short (this->x + xOffset - editControlAperture), this->y };
 				consoleRef.setCursorPosition(currentMousePosition.x, currentMousePosition.y);
 
 			}//End checking  if we have a state.
@@ -99,15 +101,16 @@ namespace ca_poganatz
 
 	void TextBox::handleFocusGain()
 	{
+		this->oldCurserState = consoleRef.getCursorVisibility();
 		consoleRef.setCursorVisibility(true);
-		this->inputHandler.gotFocus();
+		this->inputHandler->gotFocus();
 	}
 
 	void TextBox::handleFocusLost()
 	{
-		consoleRef.setCursorVisibility(false);
-		this->update();
-		this->inputHandler.lostFocus();
+		consoleRef.setCursorVisibility(this->oldCurserState);
+		this->state->setState(this->privateContent);
+		this->inputHandler->lostFocus();
 	}
 
 	void TextBox::update() 
@@ -123,13 +126,13 @@ namespace ca_poganatz
 
 	void TextBox::writeToConsoleBuffer() 
 	{
-		privateContent = this->state->getState();
 		std::wstring outputString;
 		if ((short)privateContent.size() >= this->width - 1)
 			outputString.append(privateContent.substr(privateContent.size() - this->width + 1));
 		else
 			outputString.append(privateContent);
-		outputString.push_back(' ');
+		
+		outputString.append(this->width - outputString.size(), L' ');
 
 		consoleRef.writeString(outputString, this->color, Coordinate{ this->x, this->y });
 	}
