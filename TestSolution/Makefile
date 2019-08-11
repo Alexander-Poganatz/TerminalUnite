@@ -9,13 +9,17 @@ HeaderInclude = -I $(HeaderDir)
 COMP = $(CXX)
 TERMUNITE = $(OutputDir)libTerminalUnite.a
 
-all: $(TERMUNITE) main.cpp
-	$(COMP) -o a.out main.cpp -L$(OutputDir) -lTerminalUnite -lncursesw $(HeaderInclude)
+all: $(TERMUNITE) main.o
+	$(COMP) -o a.out main.o $(TERMUNITE) -lncursesw $(HeaderInclude)
 
 $(TERMUNITE):
-	touch ../TerminalUnite/app.cpp
+	touch ../TerminalUnite/App.cpp
 	$(MAKE) -B ../TerminalUnite/Makefile
 	
+main.o:
+	$(COMP) -o $@ -c main.cpp -L$(OutputDir) -lTerminalUnite -lncursesw $(HeaderInclude)
+	
 clean:
+	rm $(TERMUNITE)
 	rm main.o
 	rm a.out
