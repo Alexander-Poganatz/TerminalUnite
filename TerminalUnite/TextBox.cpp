@@ -8,6 +8,7 @@
 
 #include <TextBox.hpp>
 #include <algorithm>
+#include <wctype.h>
 namespace ca_poganatz 
 {
 	void TextBox::handleMouseInput(InputEvent const& input, InputHandlerData eventOptions)
@@ -90,7 +91,8 @@ namespace ca_poganatz
 				consoleRef.writeString(s, this->color, outputPosition);
 				// place cursor in the control
 
-				Coordinate currentMousePosition{ this->x + xOffset - editControlAperture, this->y };
+
+				Coordinate currentMousePosition{short (this->x + xOffset - editControlAperture), this->y };
 				consoleRef.setCursorPosition(currentMousePosition.x, currentMousePosition.y);
 
 			}//End checking  if we have a state.
