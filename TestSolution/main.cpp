@@ -228,7 +228,7 @@ namespace ca_poganatz {
 			console.writeCharInfo(info, ca_poganatz::Rectangle(10, 10, 4, 4));
 
 			// I expect giberish on 16 bit wchar_t compilers like windows. Also a compile warning.
-			info.assign(16, ca_poganatz::CharInfo(L'𐐷', ca_poganatz::colors::GREEN_BACKGROUND));
+			info.assign(16, ca_poganatz::CharInfo(L'☠', ca_poganatz::colors::GREEN_BACKGROUND));
 			console.writeCharInfo(info, ca_poganatz::Rectangle(15, 15, 4, 4));
 			//Don't exit
 			console.writeString(L"Press CNTRL-C to exit", a::colors::BLUE_TEXT, a::Coordinate(0, 12));
