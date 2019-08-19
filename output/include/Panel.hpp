@@ -47,7 +47,7 @@ namespace ca_poganatz
 			@param sy [in] the y coordinate on the console
 			@return true if the x,y values intersect. false otherwise
 		*/
-		inline bool doesIntersect(short sx, short sy) { return sx >= x && sx <= x + width && sy >= y && sy <= y + height; }
+		inline bool doesIntersect(short sx, short sy) { return sx >= x && sx <= x + width && sy >= y && sy <= y + (height-1); }
 
 		/**
 			@fn handleMouseInput
