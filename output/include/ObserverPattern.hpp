@@ -44,6 +44,7 @@ namespace ca_poganatz
 	private:
 		T state;
 	public:
+		TSubject() = default;
 		TSubject(T defaultValue) : state(defaultValue) {}
 
 		inline T getState() const { return state; }
